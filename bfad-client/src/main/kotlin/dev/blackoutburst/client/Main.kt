@@ -1,6 +1,11 @@
 package dev.blackoutburst.client
 
+import dev.blackoutburst.bogel.camera.Camera
+import dev.blackoutburst.bogel.graphics.Text
+import dev.blackoutburst.bogel.graphics.Texture
+import dev.blackoutburst.bogel.utils.Color
 import dev.blackoutburst.bogel.window.Window
+import dev.blackoutburst.client.entity.EntityPlayer
 import dev.blackoutburst.client.map.MapLoader
 import dev.blackoutburst.client.tile.TilesManager
 import dev.blackoutburst.client.utils.ResourceFile
@@ -32,10 +37,29 @@ fun main() {
 }
 
 fun update() {
+    val player = EntityPlayer()
+    val position = Text(0f, 0f, 32f, "")
+    val position2 = Text(0f, 0f, 32f, "")
+
     while(Window.isOpen) {
         Window.clear()
 
+
+        player.update()
+
         TilesManager.render()
+
+        player.render()
+        position.x = -Camera.position.x
+        position.y = -Camera.position.y + 1.5f
+        position.text = "X: ${String.format("%.2f", player.position.x)}  Y: ${String.format("%.2f", player.position.y)}"
+
+        position2.x = -Camera.position.x + 1.5f
+        position2.y = -Camera.position.y
+        position2.text = "&7X: ${String.format("%.2f", player.position.x)}  Y: ${String.format("%.2f", player.position.y)}"
+
+        position2.render()
+        position.render()
 
         Window.update()
     }
