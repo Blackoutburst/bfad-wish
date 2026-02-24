@@ -5,6 +5,7 @@ import dev.blackoutburst.bogel.utils.Color
 import dev.blackoutburst.client.tile.Tile
 import dev.blackoutburst.client.tile.TileLayer
 import dev.blackoutburst.client.tile.TilesManager
+import dev.blackoutburst.client.utils.ResourceFile
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
@@ -14,7 +15,7 @@ object MapLoader {
         TilesManager.layers.clear()
 
         var layerIndex = 0
-        val stream = MapLoader::class.java.getResourceAsStream("/map/$mapName")
+        val stream = ResourceFile("/map/$mapName").inputStream
         val reader = BufferedReader(InputStreamReader(stream))
         var line: String?
 
