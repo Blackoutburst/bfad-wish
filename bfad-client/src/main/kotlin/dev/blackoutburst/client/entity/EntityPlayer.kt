@@ -16,13 +16,13 @@ import kotlin.math.sqrt
 
 
 class EntityPlayer(
-    var position: Vector2f = Vector2f(),
-    var size: Vector2f = Vector2f(32f),
+    initialPosition: Vector2f = Vector2f(),
+    initialSize: Vector2f = Vector2f(32f),
     var radius: Float = 16f,
-): Entity() {
+): Entity(initialPosition, initialSize) {
+
     companion object {
         private const val COLLISION_LAYER = 1
-
     }
 
     val playerSprite = ColoredBox2D(position.x, position.y, size.x, size.y, Color.WHITE, 100f)
