@@ -2,19 +2,12 @@ package dev.blackoutburst.client
 
 import dev.blackoutburst.bogel.camera.Camera
 import dev.blackoutburst.bogel.graphics.Text
-import dev.blackoutburst.bogel.graphics.Texture
-import dev.blackoutburst.bogel.utils.Color
 import dev.blackoutburst.bogel.window.Window
 import dev.blackoutburst.client.entity.EntityPlayer
 import dev.blackoutburst.client.map.MapLoader
 import dev.blackoutburst.client.tile.TilesManager
 import dev.blackoutburst.client.utils.ResourceFile
-import org.lwjgl.opengl.GL11.GL_BLEND
-import org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA
-import org.lwjgl.opengl.GL11.GL_SRC_ALPHA
-import org.lwjgl.opengl.GL11.GL_TEXTURE_2D
-import org.lwjgl.opengl.GL11.glBlendFunc
-import org.lwjgl.opengl.GL11.glEnable
+import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL30.GL_TEXTURE_2D_ARRAY
 
 object Main {

@@ -9,7 +9,8 @@ import dev.blackoutburst.bogel.shader.ShaderProgram
 import dev.blackoutburst.bogel.utils.stack
 import dev.blackoutburst.client.Main
 import org.lwjgl.opengl.GL20.*
-import org.lwjgl.opengl.GL30.*
+import org.lwjgl.opengl.GL30.GL_TEXTURE_2D_ARRAY
+import org.lwjgl.opengl.GL30.glBindVertexArray
 
 object TilesManager {
     private val missingTexture = Texture("textures/tiles/error.png")

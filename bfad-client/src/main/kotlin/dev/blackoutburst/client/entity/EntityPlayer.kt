@@ -8,10 +8,7 @@ import dev.blackoutburst.bogel.utils.Color
 import dev.blackoutburst.bogel.utils.Time
 import dev.blackoutburst.bogel.window.Window
 import dev.blackoutburst.client.tile.TilesManager
-import org.lwjgl.glfw.GLFW.GLFW_KEY_W
-import org.lwjgl.glfw.GLFW.GLFW_KEY_A
-import org.lwjgl.glfw.GLFW.GLFW_KEY_S
-import org.lwjgl.glfw.GLFW.GLFW_KEY_D
+import org.lwjgl.glfw.GLFW.*
 import kotlin.math.sqrt
 
 
