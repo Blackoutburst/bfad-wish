@@ -19,7 +19,7 @@ class EntityPlayer(
     var position: Vector2f = Vector2f(),
     var size: Vector2f = Vector2f(32f),
     var radius: Float = 16f,
-) {
+): Entity() {
     companion object {
         private const val COLLISION_LAYER = 1
 
@@ -118,7 +118,7 @@ class EntityPlayer(
         return Pair(penetration, normal)
     }
 
-    fun update() {
+    override fun update() {
         val dt = Time.delta.toFloat()
         handleInput()
         moveAndCollide(dt)
@@ -132,8 +132,12 @@ class EntityPlayer(
             .translate(Camera.position.x, Camera.position.y, Camera.position.z)
     }
 
-    fun render() {
+    override fun render() {
         playerSprite.render()
+    }
+
+    fun networkUpdate() {
+
     }
 
 }

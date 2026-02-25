@@ -1,12 +1,12 @@
 package dev.blackoutburst.client.entity
 
-class EntityTurret {
+class EntityTurret: Entity() {
 
-    fun update() {
+    override fun update() {
 
     }
 
-    fun render() {
+    override fun render() {
 
     }
 }

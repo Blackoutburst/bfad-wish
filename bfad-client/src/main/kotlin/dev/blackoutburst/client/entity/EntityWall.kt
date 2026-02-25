@@ -1,6 +1,6 @@
 package dev.blackoutburst.client.entity
 
-class EntityOtherPlayer: Entity() {
+class EntityWall: Entity() {
 
     override fun update() {
 

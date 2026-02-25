@@ -1,6 +1,6 @@
 package dev.blackoutburst.client.entity
 
-class EntityOtherPlayer: Entity() {
+class EntityTurretSlot: Entity() {
 
     override fun update() {
 
