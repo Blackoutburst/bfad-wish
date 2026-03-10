@@ -22,7 +22,7 @@ namespace Window {
         glfwInit();
 
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-        window = glfwCreateWindow(800, 600, "Vulkan", NULL, NULL);
+        window = glfwCreateWindow(1280, 720, "Vulkan", NULL, NULL);
 
         return window;
     }
