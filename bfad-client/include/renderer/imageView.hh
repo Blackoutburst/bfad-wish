@@ -6,7 +6,13 @@
 #include "devices/devices.hh"
 
 namespace ImageView {
-    U0 destroy(Device::It* d, VkImageView* imageView, VkSwapchainKHR swapchain);
-    VkImageView* create(Device::It* d, VkSwapchainKHR swapchain, VkSurfaceKHR windowSurface);
+    struct It {
+        VkImageView* imageView;
+        VkImage* swapChainImages;
+        U32 swapChainImagesCount;
+    };
+
+    U0 destroy(Device::It* d, ImageView::It* imageView, VkSwapchainKHR swapchain);
+    ImageView::It* create(Device::It* d, VkSwapchainKHR swapchain, VkSurfaceKHR windowSurface);
 }
 

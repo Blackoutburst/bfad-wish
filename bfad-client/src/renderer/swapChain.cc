@@ -103,7 +103,11 @@ namespace SwapChain {
         createInfo.imageArrayLayers = 1;
         createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
-        U32 queues[2] = { QueueFamilies::getType(device->physical, VK_QUEUE_GRAPHICS_BIT), LogicalDevice::getSurfaceSupport(device->physical, windowSurface) };
+        U32 queues[2] = { 
+            QueueFamilies::getType(device->physical, VK_QUEUE_GRAPHICS_BIT), 
+            LogicalDevice::getSurfaceSupport(device->physical, windowSurface) 
+        };
+        
         U8 sameQueue = queues[0] == queues[1];
 
         if (sameQueue) {

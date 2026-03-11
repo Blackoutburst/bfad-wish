@@ -2,7 +2,7 @@
 
 #include "types.hh"
 
-#define LAYERS_COUNT 6
+#define LAYERS_COUNT 4
 
 namespace ValidationLayer { 
     I32 count(U0);

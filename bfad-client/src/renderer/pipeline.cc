@@ -1,6 +1,11 @@
 #include "renderer/pipeline.hh"
 #include "renderer/swapChain.hh"
 
+static VkDynamicState dynamicStates[2] = {
+    VK_DYNAMIC_STATE_VIEWPORT,
+    VK_DYNAMIC_STATE_SCISSOR
+}; 
+
 namespace Pipeline {
     VkPipelineShaderStageCreateInfo createShader(VkShaderStageFlagBits stage, VkShaderModule shader) {
         VkPipelineShaderStageCreateInfo createInfo;
@@ -16,11 +21,6 @@ namespace Pipeline {
     }
 
     VkPipelineDynamicStateCreateInfo createDynamicState(U0) {
-        VkDynamicState dynamicStates[2] = {
-            VK_DYNAMIC_STATE_VIEWPORT,
-            VK_DYNAMIC_STATE_SCISSOR
-        }; 
-
         VkPipelineDynamicStateCreateInfo createInfo;
         createInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
         createInfo.pNext = NULL;
@@ -79,15 +79,15 @@ namespace Pipeline {
         return scissor;
     }
 
-    VkPipelineViewportStateCreateInfo createViewportState(VkViewport viewport, VkRect2D scissor) {
+    VkPipelineViewportStateCreateInfo createViewportState(VkViewport* viewport, VkRect2D* scissor) {
         VkPipelineViewportStateCreateInfo createInfo;
         createInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
         createInfo.pNext = NULL;
         createInfo.flags = 0;
         createInfo.viewportCount = 1;
-        createInfo.pViewports = &viewport;
+        createInfo.pViewports = viewport;
         createInfo.scissorCount = 1;
-        createInfo.pScissors = &scissor;
+        createInfo.pScissors = scissor;
 
         return createInfo;
     }
@@ -140,7 +140,7 @@ namespace Pipeline {
         return createInfo;
     }
 
-    VkPipelineColorBlendStateCreateInfo createColorBlendState(VkPipelineColorBlendAttachmentState colorBlendAttachment) {
+    VkPipelineColorBlendStateCreateInfo createColorBlendState(VkPipelineColorBlendAttachmentState* colorBlendAttachment) {
         VkPipelineColorBlendStateCreateInfo createInfo;
         createInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
         createInfo.pNext = NULL;
@@ -148,7 +148,7 @@ namespace Pipeline {
         createInfo.logicOpEnable = VK_FALSE;
         createInfo.logicOp = VK_LOGIC_OP_COPY;
         createInfo.attachmentCount = 1;
-        createInfo.pAttachments = &colorBlendAttachment;
+        createInfo.pAttachments = colorBlendAttachment;
         createInfo.blendConstants[0] = 0.0f;
         createInfo.blendConstants[1] = 0.0f;
         createInfo.blendConstants[2] = 0.0f;
@@ -170,10 +170,13 @@ namespace Pipeline {
 
         VkPipelineVertexInputStateCreateInfo vertexInput = createVertexInput();
         VkPipelineInputAssemblyStateCreateInfo inputAssembly = createInputAssembly();
-        VkPipelineViewportStateCreateInfo viewport = createViewportState(createViewport(window, device, windowSurface), createScissor(window, device, windowSurface));
+        VkViewport viewPort = createViewport(window, device, windowSurface);
+        VkRect2D scissor = createScissor(window, device, windowSurface);
+        VkPipelineViewportStateCreateInfo viewport = createViewportState(&viewPort, &scissor);
         VkPipelineRasterizationStateCreateInfo rasterizer = createRasterizerState();
         VkPipelineMultisampleStateCreateInfo multiSampling = createMultisamplingState();
-        VkPipelineColorBlendStateCreateInfo colorBlend =  createColorBlendState(createColorBlendAttachmentState());
+        VkPipelineColorBlendAttachmentState colorBlendAttachmentState = createColorBlendAttachmentState();
+        VkPipelineColorBlendStateCreateInfo colorBlend =  createColorBlendState(&colorBlendAttachmentState);
         VkPipelineDynamicStateCreateInfo dynamicState = createDynamicState();
 
         VkGraphicsPipelineCreateInfo createInfo;

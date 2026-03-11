@@ -13,11 +13,11 @@ namespace Pipeline {
     VkPipelineInputAssemblyStateCreateInfo createInputAssembly(U0);
     VkViewport createViewport(GLFWwindow* window, Device::It* device, VkSurfaceKHR windowSurface);
     VkRect2D createScissor(GLFWwindow* window, Device::It* device, VkSurfaceKHR windowSurface);
-    VkPipelineViewportStateCreateInfo createViewportState(VkViewport viewport, VkRect2D scissor);
+    VkPipelineViewportStateCreateInfo createViewportState(VkViewport* viewport, VkRect2D* scissor);
     VkPipelineRasterizationStateCreateInfo createRasterizerState(U0);
     VkPipelineMultisampleStateCreateInfo createMultisamplingState(U0);
     VkPipelineColorBlendAttachmentState createColorBlendAttachmentState(U0);
-    VkPipelineColorBlendStateCreateInfo createColorBlendState(VkPipelineColorBlendAttachmentState colorBlendAttachment);
+    VkPipelineColorBlendStateCreateInfo createColorBlendState(VkPipelineColorBlendAttachmentState* colorBlendAttachment);
     U0 destroy(Device::It* device, VkPipeline graphicsPipeline);
     VkPipeline create(GLFWwindow* window, Device::It* device, VkPipelineLayout layout, VkShaderModule vertexShader, VkShaderModule fragmentShader, VkRenderPass renderPass, VkSurfaceKHR windowSurface);
 

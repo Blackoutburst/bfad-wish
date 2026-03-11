@@ -4,18 +4,21 @@
 #include "renderer/swapChain.hh"
 
 namespace ImageView {
-    U0 destroy(Device::It* d, VkImageView* imageView, VkSwapchainKHR swapchain) {
+    U0 destroy(Device::It* d, ImageView::It* imageView, VkSwapchainKHR swapchain) {
         VkDevice device = d->logical;
         U32 swapChainImagesCount = SwapChain::getImagesCount(d, swapchain);
 
         for (U32 i = 0; i < swapChainImagesCount; i++) {
-            vkDestroyImageView(device, imageView[i], NULL);
+            vkDestroyImageView(device, imageView->imageView[i], NULL);
         }
 
+        free(imageView->swapChainImages);
+        free(imageView->imageView);
         free(imageView);
     }
 
-    VkImageView* create(Device::It* d, VkSwapchainKHR swapchain, VkSurfaceKHR windowSurface) {
+    ImageView::It* create(Device::It* d, VkSwapchainKHR swapchain, VkSurfaceKHR windowSurface) {
+        ImageView::It* parent = (ImageView::It*)malloc(sizeof(ImageView::It));
         VkImageView* imageView;
         VkDevice device = d->logical;
         U32 swapChainImagesCount = SwapChain::getImagesCount(d, swapchain);
@@ -45,7 +48,11 @@ namespace ImageView {
             vkCreateImageView(device, &createInfo, NULL, &imageView[i]);
         }
 
-        return imageView;
+        parent->imageView = imageView;
+        parent->swapChainImages = swapChainImages;
+        parent->swapChainImagesCount = swapChainImagesCount;
+        
+        return parent;
     }
 }
 
