@@ -7,7 +7,7 @@
 namespace ImageView {
     U0 destroy(Context::It* ctx, ImageView::It* imageView) {
         for (U32 i = 0; i < imageView->swapChainImagesCount; i++) {
-            vkDestroyImageView(ctx->device->logical, imageView->imageView[i], NULL);
+            vkDestroyImageView(ctx->device->logical, imageView->handle[i], NULL);
             Semaphore::destroy(ctx, imageView->pSemaphore[i]);
             Semaphore::destroy(ctx, imageView->rSemaphore[i]);
         }
@@ -15,7 +15,7 @@ namespace ImageView {
         free(imageView->pSemaphore);
         free(imageView->rSemaphore);
         free(imageView->swapChainImages);
-        free(imageView->imageView);
+        free(imageView->handle);
         free(imageView);
     }
 
@@ -57,7 +57,7 @@ namespace ImageView {
 
         parent->currentFrame = 0;
         parent->imageIndex = 0;
-        parent->imageView = imageView;
+        parent->handle = imageView;
         parent->swapChainImages = swapChainImages;
         parent->swapChainImagesCount = swapChainImagesCount;
         parent->pSemaphore = pSemaphore;

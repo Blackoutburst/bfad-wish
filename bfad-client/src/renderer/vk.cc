@@ -1,5 +1,7 @@
 #include <stdlib.h>
 
+#include "renderSystem.hh"
+
 #include "renderer/vk.hh"
 #include "devices/devices.hh"
 #include "debug/logCallback.hh"
@@ -20,7 +22,7 @@
 #include "devices/commandBuffer.hh"
 #include "utils/semaphore.hh"
 #include "utils/fence.hh"
-#include "renderSystem.hh"
+#include "utils/buffer.hh"
 
 static Context::It* ctx;
 static RenderSystem::It* renderSystem;
@@ -32,6 +34,7 @@ static VkPipeline pipeline;
 static VkCommandPool cmdPool;
 static VkCommandBuffer cmdBuffer;
 static VkFence drawFence;
+static Buffer::It* vertexBuffer;
 
 U0 vkDrawTriangle(U0) {
     Fence::wait(ctx, drawFence);
@@ -64,6 +67,11 @@ U0 vkDrawTriangle(U0) {
     scissor.offset = {0, 0};
     scissor.extent = extends;
     vkCmdSetScissor(cmdBuffer, 0, 1, &scissor);
+
+    VkBuffer vertexBuffers[] = { vertexBuffer->handle };
+    VkDeviceSize offsets[] = { 0 };
+
+    vkCmdBindVertexBuffers(cmdBuffer, 0, 1, vertexBuffers, offsets);
 
     vkCmdDraw(cmdBuffer, 3, 1, 0, 0);
 
@@ -113,10 +121,22 @@ U0 vkInit(GLFWwindow* window) {
     cmdBuffer = CommandBuffer::create(ctx, cmdPool);
 
     drawFence = Fence::create(ctx);
+
+    F32 vertexData[15] = {
+         0.0, -0.5, 0.0, 0.0, 1.0,
+         0.5,  0.5, 1.0, 0.0, 0.0,
+        -0.5,  0.5, 1.0, 0.0, 0.0,
+    };
+
+    vertexBuffer = Buffer::create(ctx, sizeof(vertexData[0]) * 15, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+
+    Buffer::upload(ctx, vertexBuffer, vertexData, sizeof(vertexData[0]) * 15);
 }
 
 U0 vkClean(U0) {
     vkDeviceWaitIdle(ctx->device->logical);
+
+    Buffer::destroy(ctx, vertexBuffer);
 
     Fence::destroy(ctx, drawFence);
 

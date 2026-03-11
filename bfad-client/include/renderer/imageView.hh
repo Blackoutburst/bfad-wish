@@ -7,9 +7,9 @@
 
 namespace ImageView {
     struct It {
+        VkImageView* handle;
         U32 currentFrame;
         U32 imageIndex;
-        VkImageView* imageView;
         VkImage* swapChainImages;
         U32 swapChainImagesCount;
         VkSemaphore* pSemaphore;

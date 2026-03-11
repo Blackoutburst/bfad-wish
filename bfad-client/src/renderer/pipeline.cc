@@ -32,14 +32,32 @@ namespace Pipeline {
     }
 
     VkPipelineVertexInputStateCreateInfo createVertexInput(U0) {
+        // TODO: Remove static create clean pipeline system
+        static VkVertexInputBindingDescription bindingDesc;
+        bindingDesc.binding = 0;
+        bindingDesc.stride = 20;
+        bindingDesc.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+
+        static VkVertexInputAttributeDescription attrDescs[2];
+
+        attrDescs[0].location = 0;
+        attrDescs[0].binding = 0;
+        attrDescs[0].format = VK_FORMAT_R32G32_SFLOAT;
+        attrDescs[0].offset = 0;
+
+        attrDescs[1].location = 1;
+        attrDescs[1].binding = 0;
+        attrDescs[1].format = VK_FORMAT_R32G32B32_SFLOAT;
+        attrDescs[1].offset = 8;
+
         VkPipelineVertexInputStateCreateInfo createInfo;
         createInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
         createInfo.pNext = NULL;
         createInfo.flags = 0;
-        createInfo.vertexBindingDescriptionCount = 0;
-        createInfo.pVertexBindingDescriptions = NULL;
-        createInfo.vertexAttributeDescriptionCount = 0;
-        createInfo.pVertexAttributeDescriptions = NULL;
+        createInfo.vertexBindingDescriptionCount = 1;
+        createInfo.pVertexBindingDescriptions = &bindingDesc;
+        createInfo.vertexAttributeDescriptionCount = 2;
+        createInfo.pVertexAttributeDescriptions = attrDescs;
 
         return createInfo;
     }

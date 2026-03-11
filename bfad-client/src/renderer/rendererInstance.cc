@@ -25,7 +25,7 @@ namespace RendererInstance {
         appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
         appInfo.pEngineName = "No Engine";
         appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
-        appInfo.apiVersion = VK_API_VERSION_1_1;
+        appInfo.apiVersion = VK_API_VERSION_1_4;
 
         U32 glfwExtensionCount = 0;
         const I8** glfwExtensions;
