@@ -1,19 +1,17 @@
 #pragma once
 
 #include <vulkan/vulkan.h>
-#include <GLFW/glfw3.h>
 
 #include "types.hh"
-#include "window/window.hh"
-#include "devices/devices.hh"
+#include "context.hh"
 
-namespace SwapChain {
-    VkImage* getImages(Device::It* device, VkSwapchainKHR swapchain);
-    U32 getImagesCount(Device::It* device, VkSwapchainKHR swapchain);
-    VkSurfaceFormatKHR getFormat(Device::It* device, VkSurfaceKHR windowSurface);
-    VkPresentModeKHR getPresentMode(Device::It* device, VkSurfaceKHR windowSurface);
-    VkSurfaceCapabilitiesKHR getCapabilities(Device::It* device, VkSurfaceKHR windowSurface);
-    VkExtent2D extend(GLFWwindow* window, Device::It* device, VkSurfaceKHR windowSurface);
-    U0 destroy(Device::It* device, VkSwapchainKHR swapchain);
-    VkSwapchainKHR create(GLFWwindow* window, Device::It* device, VkSurfaceKHR windowSurface);
+namespace Swapchain {
+    VkImage* getImages(Context::It* ctx, VkSwapchainKHR swapchain);
+    U32 getImagesCount(Context::It* ctx, VkSwapchainKHR swapchain);
+    VkSurfaceFormatKHR getFormat(Context::It* ctx);
+    VkPresentModeKHR getPresentMode(Context::It* ctx);
+    VkSurfaceCapabilitiesKHR getCapabilities(Context::It* ctx);
+    VkExtent2D extend(Context::It* ctx);
+    U0 destroy(Context::It* ctx, VkSwapchainKHR swapchain);
+    VkSwapchainKHR create(Context::It* ctx);
 }

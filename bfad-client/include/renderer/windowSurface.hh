@@ -4,8 +4,9 @@
 #include <GLFW/glfw3.h>
 
 #include "types.hh"
+#include "context.hh"
 
 namespace WindowSurface {
-    U0 destroy(VkInstance instance, VkSurfaceKHR surface);
+    U0 destroy(Context::It* ctx);
     VkSurfaceKHR create(VkInstance instance, GLFWwindow* window);
 }

@@ -3,11 +3,11 @@
 #include <vulkan/vulkan.h>
 
 #include "types.hh"
-#include "devices/devices.hh"
+#include "context.hh"
 
 namespace CommandBuffer {
     U0 begin(VkCommandBuffer cmdBuffer);
     U0 end(VkCommandBuffer cmdBuffer);
-    U0 destroy(VkCommandBuffer cmdBuffer, VkCommandPool cmdPool, Device::It* device);
-    VkCommandBuffer create(VkCommandPool cmdPool, Device::It* device);
+    U0 destroy(Context::It* ctx, VkCommandBuffer cmdBuffer, VkCommandPool cmdPool);
+    VkCommandBuffer create(Context::It* ctx, VkCommandPool cmdPool);
 }

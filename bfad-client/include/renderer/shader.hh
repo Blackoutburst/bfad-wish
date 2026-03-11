@@ -3,9 +3,9 @@
 #include <vulkan/vulkan.h>
 
 #include "types.hh"
-#include "devices/devices.hh"
+#include "context.hh"
 
 namespace Shader {
-    U0 destroy(Device::It* device, VkShaderModule shader);
-    VkShaderModule create(Device::It* device, const I8* filePath);
+    U0 destroy(Context::It* ctx, VkShaderModule shader);
+    VkShaderModule create(Context::It* ctx, const I8* filePath);
 }

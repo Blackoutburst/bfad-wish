@@ -3,9 +3,9 @@
 #include <vulkan/vulkan.h>
 
 #include "types.hh"
-#include "devices/devices.hh"
+#include "context.hh"
 
 namespace Semaphore {
-    VkSemaphore create(Device::It* device);
-    U0 destroy(Device::It* device, VkSemaphore semaphore);
+    VkSemaphore create(Context::It* ctx);
+    U0 destroy(Context::It* ctx, VkSemaphore semaphore);
 }

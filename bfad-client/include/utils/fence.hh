@@ -3,11 +3,11 @@
 #include <vulkan/vulkan.h>
 
 #include "types.hh"
-#include "devices/devices.hh"
+#include "context.hh"
 
 namespace Fence {
-    VkFence create(Device::It* device);
-    U0 destroy(Device::It* device, VkFence fence);
-    U0 wait(Device::It* device, VkFence fence);
-    U0 reset(Device::It* device, VkFence fence);
+    VkFence create(Context::It* ctx);
+    U0 destroy(Context::It* ctx, VkFence fence);
+    U0 wait(Context::It* ctx, VkFence fence);
+    U0 reset(Context::It* ctx, VkFence fence);
 }

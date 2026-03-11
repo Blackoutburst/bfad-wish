@@ -2,13 +2,13 @@
 #include "devices/queueFamilies.hh"
 
 namespace CommandPool {
-    U0 destroy(VkCommandPool cmdPool, Device::It* device) {
-        vkDestroyCommandPool(device->logical, cmdPool, NULL);
+    U0 destroy(Context::It* ctx, VkCommandPool cmdPool) {
+        vkDestroyCommandPool(ctx->device->logical, cmdPool, NULL);
     }
 
-    VkCommandPool create(Device::It* device) {
+    VkCommandPool create(Context::It* ctx) {
         VkCommandPool cmdPool;
-        U32 graphicQueue = QueueFamilies::getType(device->physical, VK_QUEUE_GRAPHICS_BIT);
+        U32 graphicQueue = QueueFamilies::getType(ctx->device->physical, VK_QUEUE_GRAPHICS_BIT);
 
         VkCommandPoolCreateInfo createInfo;
         createInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
@@ -16,7 +16,7 @@ namespace CommandPool {
         createInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
         createInfo.queueFamilyIndex = graphicQueue;
 
-        vkCreateCommandPool(device->logical, &createInfo, NULL, &cmdPool);
+        vkCreateCommandPool(ctx->device->logical, &createInfo, NULL, &cmdPool);
 
         return cmdPool;
     }

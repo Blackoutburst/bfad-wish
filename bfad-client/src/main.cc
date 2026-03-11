@@ -20,7 +20,7 @@ I32 main(I32 argc, I8** argv) {
     while(Window::isOpen(window)) {
         Window::update(window);
 
-        vkDrawTriangle(window);
+        vkDrawTriangle();
     }
 
     vkClean();

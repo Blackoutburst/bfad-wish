@@ -1,5 +1,5 @@
 #include "renderer/pipeline.hh"
-#include "renderer/swapChain.hh"
+#include "renderer/swapchain.hh"
 
 static VkDynamicState dynamicStates[2] = {
     VK_DYNAMIC_STATE_VIEWPORT,
@@ -55,8 +55,8 @@ namespace Pipeline {
         return createInfo;
     }
 
-    VkViewport createViewport(GLFWwindow* window, Device::It* device, VkSurfaceKHR windowSurface) {
-        VkExtent2D extend = SwapChain::extend(window, device, windowSurface);
+    VkViewport createViewport(Context::It* ctx) {
+        VkExtent2D extend = Swapchain::extend(ctx);
 
         VkViewport viewport;
         viewport.x = 0.0f;
@@ -69,8 +69,8 @@ namespace Pipeline {
         return viewport;
     }
 
-    VkRect2D createScissor(GLFWwindow* window, Device::It* device, VkSurfaceKHR windowSurface) {
-        VkExtent2D extend = SwapChain::extend(window, device, windowSurface);
+    VkRect2D createScissor(Context::It* ctx) {
+        VkExtent2D extend = Swapchain::extend(ctx);
 
         VkRect2D scissor;
         scissor.offset = {0, 0};
@@ -157,11 +157,11 @@ namespace Pipeline {
         return createInfo;
     }
 
-    U0 destroy(Device::It* device, VkPipeline graphicsPipeline) {
-        vkDestroyPipeline(device->logical, graphicsPipeline, NULL);
+    U0 destroy(Context::It* ctx, VkPipeline graphicsPipeline) {
+        vkDestroyPipeline(ctx->device->logical, graphicsPipeline, NULL);
     }
 
-    VkPipeline create(GLFWwindow* window, Device::It* device, VkPipelineLayout layout, VkShaderModule vertexShader, VkShaderModule fragmentShader, VkRenderPass renderPass, VkSurfaceKHR windowSurface) {
+    VkPipeline create(Context::It* ctx, VkPipelineLayout layout, VkShaderModule vertexShader, VkShaderModule fragmentShader, VkRenderPass renderPass) {
         UNUSED_VAR(layout);
         
         VkPipelineShaderStageCreateInfo vertexInfo = createShader(VK_SHADER_STAGE_VERTEX_BIT, vertexShader);
@@ -170,8 +170,8 @@ namespace Pipeline {
 
         VkPipelineVertexInputStateCreateInfo vertexInput = createVertexInput();
         VkPipelineInputAssemblyStateCreateInfo inputAssembly = createInputAssembly();
-        VkViewport viewPort = createViewport(window, device, windowSurface);
-        VkRect2D scissor = createScissor(window, device, windowSurface);
+        VkViewport viewPort = createViewport(ctx);
+        VkRect2D scissor = createScissor(ctx);
         VkPipelineViewportStateCreateInfo viewport = createViewportState(&viewPort, &scissor);
         VkPipelineRasterizationStateCreateInfo rasterizer = createRasterizerState();
         VkPipelineMultisampleStateCreateInfo multiSampling = createMultisamplingState();
@@ -201,17 +201,17 @@ namespace Pipeline {
         createInfo.basePipelineIndex = -1;
 
         VkPipeline graphicsPipeline;
-        vkCreateGraphicsPipelines(device->logical, VK_NULL_HANDLE, 1, &createInfo, NULL, &graphicsPipeline);
+        vkCreateGraphicsPipelines(ctx->device->logical, VK_NULL_HANDLE, 1, &createInfo, NULL, &graphicsPipeline);
 
         return graphicsPipeline;
     }
 
     namespace Layout {
-        U0 remove(Device::It* device, VkPipelineLayout layout) {
-            vkDestroyPipelineLayout(device->logical, layout, NULL);
+        U0 remove(Context::It* ctx, VkPipelineLayout layout) {
+            vkDestroyPipelineLayout(ctx->device->logical, layout, NULL);
         }
 
-        VkPipelineLayout create(Device::It* device) {
+        VkPipelineLayout create(Context::It* ctx) {
             VkPipelineLayout pipelineLayout;
             
             VkPipelineLayoutCreateInfo createInfo;
@@ -223,13 +223,13 @@ namespace Pipeline {
             createInfo.pushConstantRangeCount = 0;
             createInfo.pPushConstantRanges = NULL;
             
-            vkCreatePipelineLayout(device->logical, &createInfo, NULL, &pipelineLayout);
+            vkCreatePipelineLayout(ctx->device->logical, &createInfo, NULL, &pipelineLayout);
 
             return pipelineLayout;
         }
 
-        U0 destroy(Device::It* device, VkPipelineLayout pipelineLayout) {
-            vkDestroyPipelineLayout(device->logical, pipelineLayout, NULL);
+        U0 destroy(Context::It* ctx, VkPipelineLayout pipelineLayout) {
+            vkDestroyPipelineLayout(ctx->device->logical, pipelineLayout, NULL);
         }
     }
 }

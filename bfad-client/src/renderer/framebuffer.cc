@@ -1,21 +1,21 @@
 #include <stdlib.h>
 #include "renderer/framebuffer.hh"
-#include "renderer/swapChain.hh"
+#include "renderer/swapchain.hh"
 #include "devices/devices.hh"
 
 namespace Framebuffer {
-    U0 destroy(Device::It* device, VkSwapchainKHR swapchain, VkFramebuffer* framebuffers) {
-        U32 bufferCount = SwapChain::getImagesCount(device, swapchain);
+    U0 destroy(Context::It* ctx, VkSwapchainKHR swapchain, VkFramebuffer* framebuffers) {
+        U32 bufferCount = Swapchain::getImagesCount(ctx, swapchain);
 
         for (U32 i = 0; i < bufferCount; i++) {
-            vkDestroyFramebuffer(device->logical, framebuffers[i], NULL);
+            vkDestroyFramebuffer(ctx->device->logical, framebuffers[i], NULL);
         }
     }
 
-    VkFramebuffer* create(GLFWwindow* window, Device::It* device, VkSwapchainKHR swapchain, VkRenderPass renderPass, VkImageView* imageView, VkSurfaceKHR windowSurface) {
-        U32 imageCount = SwapChain::getImagesCount(device, swapchain);
+    VkFramebuffer* create(Context::It* ctx, VkSwapchainKHR swapchain, VkRenderPass renderPass, VkImageView* imageView) {
+        U32 imageCount = Swapchain::getImagesCount(ctx, swapchain);
         VkFramebuffer* framebuffers = (VkFramebuffer*)malloc(sizeof(VkFramebuffer) * imageCount);
-        VkExtent2D extends = SwapChain::extend(window, device, windowSurface);
+        VkExtent2D extends = Swapchain::extend(ctx);
 
         for (U32 i = 0; i < imageCount; i++) {
             VkImageView attachments[1] = { imageView[i] };
@@ -31,7 +31,7 @@ namespace Framebuffer {
             createInfo.height = extends.height;
             createInfo.layers = 1;
 
-            vkCreateFramebuffer(device->logical, &createInfo, NULL, &framebuffers[i]);
+            vkCreateFramebuffer(ctx->device->logical, &createInfo, NULL, &framebuffers[i]);
         }
 
         return framebuffers;

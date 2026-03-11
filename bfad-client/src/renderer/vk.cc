@@ -8,7 +8,7 @@
 #include "renderer/windowSurface.hh"
 #include "utils/args.hh"
 #include "utils/logger.hh"
-#include "renderer/swapChain.hh"
+#include "renderer/swapchain.hh"
 #include "renderer/imageView.hh"
 #include "renderer/shader.hh"
 #include "renderer/pipeline.hh"
@@ -21,7 +21,8 @@
 #include "utils/semaphore.hh"
 #include "utils/fence.hh"
 
-static VkInstance instance;
+static Context::It* ctx;
+
 static VkShaderModule vertexShader;
 static VkShaderModule fragmentShader;
 static VkPipelineLayout pipelineLayout;
@@ -32,8 +33,6 @@ static ImageView::It* imageView;
 static VkFramebuffer* frambuffers;
 static VkCommandPool cmdPool;
 static VkCommandBuffer cmdBuffer;
-static Device::It* device;
-static VkSurfaceKHR windowSurface;
 static VkDebugUtilsMessengerEXT loggerCallback;
 static VkSemaphore* presentCompleteSemaphores;
 static VkSemaphore* renderFinishedSemaphores;
@@ -41,19 +40,19 @@ static VkFence drawFence;
 static U32 swapChainImageCount;
 static U32 currentFrame;
 
-U0 vkDrawTriangle(GLFWwindow* window) {
-    Fence::wait(device, drawFence);
-    Fence::reset(device, drawFence);
+U0 vkDrawTriangle(U0) {
+    Fence::wait(ctx, drawFence);
+    Fence::reset(ctx, drawFence);
 
     U32 imageIndex;
-    vkAcquireNextImageKHR(device->logical, swapchain, UINT64_MAX, presentCompleteSemaphores[currentFrame], VK_NULL_HANDLE, &imageIndex);
+    vkAcquireNextImageKHR(ctx->device->logical, swapchain, UINT64_MAX, presentCompleteSemaphores[currentFrame], VK_NULL_HANDLE, &imageIndex);
 
     vkResetCommandBuffer(cmdBuffer, 0);
     CommandBuffer::begin(cmdBuffer);
-    RenderPass::begin(window, device, renderPass, frambuffers, cmdBuffer, imageIndex, windowSurface);
+    RenderPass::begin(ctx, renderPass, frambuffers, cmdBuffer, imageIndex);
     vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
 
-    VkExtent2D extends = SwapChain::extend(window, device, windowSurface);
+    VkExtent2D extends = Swapchain::extend(ctx);
     
     VkViewport viewport;
     viewport.x = 0.0f;
@@ -86,7 +85,7 @@ U0 vkDrawTriangle(GLFWwindow* window) {
     submitInfo.signalSemaphoreCount = 1;
     submitInfo.pSignalSemaphores = &renderFinishedSemaphores[currentFrame];
 
-    vkQueueSubmit(device->graphicQueue, 1, &submitInfo, drawFence);
+    vkQueueSubmit(ctx->device->graphicQueue, 1, &submitInfo, drawFence);
 
     VkPresentInfoKHR presentInfo;
     presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
@@ -96,84 +95,89 @@ U0 vkDrawTriangle(GLFWwindow* window) {
     presentInfo.pSwapchains = &swapchain;
     presentInfo.pImageIndices = &imageIndex;
 
-    vkQueuePresentKHR(device->presentQueue, &presentInfo);
+    vkQueuePresentKHR(ctx->device->presentQueue, &presentInfo);
 
     currentFrame = (currentFrame + 1) % swapChainImageCount;
 }
 
-U0 vkInit(GLFWwindow* window) {
-    instance = RendererInstance::create();
+U0 vkInit(GLFWwindow* glfwWindow) {
+    VkInstance instance = RendererInstance::create();
 
     if (Args::getValidationLayers()) {
         loggerCallback = LogCallback::create(instance);
     }
     
-    windowSurface = WindowSurface::create(instance, window);
+    VkSurfaceKHR windowSurface = WindowSurface::create(instance, glfwWindow);
 
     VkPhysicalDevice physical = PhysicalDevice::create(instance, windowSurface);
     VkDevice logical = LogicalDevice::create(physical, windowSurface);
-    device = Device::create(physical, logical, windowSurface);
-    
-    swapchain = SwapChain::create(window, device, windowSurface);
-    imageView = ImageView::create(device, swapchain, windowSurface);
+    Device::It* device = Device::create(physical, logical, windowSurface);
 
-    swapChainImageCount = SwapChain::getImagesCount(device, swapchain);
-
-    vertexShader = Shader::create(device, "./shader/triangleVert.spv");
-    fragmentShader = Shader::create(device, "./shader/triangleFrag.spv");
-    pipelineLayout = Pipeline::Layout::create(device);
-    renderPass = RenderPass::create(device, windowSurface);
-    pipeline = Pipeline::create(window, device, pipelineLayout, vertexShader, fragmentShader, renderPass, windowSurface);
+    ctx = Context::create(glfwWindow, instance, device, windowSurface);
     
-    frambuffers = Framebuffer::create(window, device, swapchain, renderPass, imageView->imageView, windowSurface);
-    cmdPool = CommandPool::create(device);
-    cmdBuffer = CommandBuffer::create(cmdPool, device);
+    swapchain = Swapchain::create(ctx);
+    imageView = ImageView::create(ctx, swapchain);
+
+    swapChainImageCount = Swapchain::getImagesCount(ctx, swapchain);
+
+    vertexShader = Shader::create(ctx, "./shader/triangleVert.spv");
+    fragmentShader = Shader::create(ctx, "./shader/triangleFrag.spv");
+    pipelineLayout = Pipeline::Layout::create(ctx);
+    renderPass = RenderPass::create(ctx);
+    pipeline = Pipeline::create(ctx, pipelineLayout, vertexShader, fragmentShader, renderPass);
+    
+    frambuffers = Framebuffer::create(ctx, swapchain, renderPass, imageView->imageView);
+    cmdPool = CommandPool::create(ctx);
+    cmdBuffer = CommandBuffer::create(ctx, cmdPool);
 
     presentCompleteSemaphores = (VkSemaphore*)malloc(swapChainImageCount * sizeof(VkSemaphore));
     for (U32 i = 0; i < swapChainImageCount; i++) {
-        presentCompleteSemaphores[i] = Semaphore::create(device);
+        presentCompleteSemaphores[i] = Semaphore::create(ctx);
     }
 
     renderFinishedSemaphores = (VkSemaphore*)malloc(swapChainImageCount * sizeof(VkSemaphore));
     for (U32 i = 0; i < swapChainImageCount; i++) {
-        renderFinishedSemaphores[i] = Semaphore::create(device);
+        renderFinishedSemaphores[i] = Semaphore::create(ctx);
     }
     
-    drawFence = Fence::create(device);
+    drawFence = Fence::create(ctx);
 }
 
 U0 vkClean(U0) {
-    vkDeviceWaitIdle(device->logical);
+    vkDeviceWaitIdle(ctx->device->logical);
 
     for (U32 i = 0; i < swapChainImageCount; i++) {
-        Semaphore::destroy(device, presentCompleteSemaphores[i]);
+        Semaphore::destroy(ctx, presentCompleteSemaphores[i]);
     }
     free(presentCompleteSemaphores);
 
     for (U32 i = 0; i < swapChainImageCount; i++) {
-        Semaphore::destroy(device, renderFinishedSemaphores[i]);
+        Semaphore::destroy(ctx, renderFinishedSemaphores[i]);
     }
     free(renderFinishedSemaphores);
     
-    Fence::destroy(device, drawFence);
+    Fence::destroy(ctx, drawFence);
 
-    CommandBuffer::destroy(cmdBuffer, cmdPool, device);
-    CommandPool::destroy(cmdPool, device);
-    Framebuffer::destroy(device, swapchain, frambuffers);
+    CommandBuffer::destroy(ctx, cmdBuffer, cmdPool);
+    CommandPool::destroy(ctx, cmdPool);
+    Framebuffer::destroy(ctx, swapchain, frambuffers);
     
-    Shader::destroy(device, vertexShader);
-    Shader::destroy(device, fragmentShader);
-    Pipeline::Layout::destroy(device, pipelineLayout);
-    RenderPass::destroy(device, renderPass);
-    Pipeline::destroy(device, pipeline);
-    ImageView::destroy(device, imageView, swapchain);
-    SwapChain::destroy(device, swapchain);
-    Device::destroy(device);
-    WindowSurface::destroy(instance, windowSurface);
+    Shader::destroy(ctx, vertexShader);
+    Shader::destroy(ctx, fragmentShader);
+    Pipeline::Layout::destroy(ctx, pipelineLayout);
+    RenderPass::destroy(ctx, renderPass);
+    Pipeline::destroy(ctx, pipeline);
+    ImageView::destroy(ctx, imageView, swapchain);
+    Swapchain::destroy(ctx, swapchain);
+    
+    Device::destroy(ctx->device);
+    WindowSurface::destroy(ctx);
     
     if (Args::getValidationLayers()) {
-        LogCallback::destroy(instance, loggerCallback);
+        LogCallback::destroy(ctx->instance, loggerCallback);
     }
     
-    RendererInstance::destroy(instance);
+    RendererInstance::destroy(ctx);
+
+    Context::destroy(ctx);
 }

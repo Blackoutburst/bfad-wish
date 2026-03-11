@@ -3,7 +3,7 @@
 #include <vulkan/vulkan.h>
 
 #include "types.hh"
-#include "devices/devices.hh"
+#include "context.hh"
 
 namespace ImageView {
     struct It {
@@ -12,7 +12,7 @@ namespace ImageView {
         U32 swapChainImagesCount;
     };
 
-    U0 destroy(Device::It* d, ImageView::It* imageView, VkSwapchainKHR swapchain);
-    ImageView::It* create(Device::It* d, VkSwapchainKHR swapchain, VkSurfaceKHR windowSurface);
+    U0 destroy(Context::It* ctx, ImageView::It* imageView, VkSwapchainKHR swapchain);
+    ImageView::It* create(Context::It* ctx, VkSwapchainKHR swapchain);
 }
 

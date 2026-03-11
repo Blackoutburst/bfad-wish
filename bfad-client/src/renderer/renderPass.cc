@@ -1,14 +1,14 @@
 #include "renderer/renderPass.hh"
-#include "renderer/swapChain.hh"
+#include "renderer/swapchain.hh"
 
 namespace RenderPass {
     U0 end(VkCommandBuffer cmdBuffer) {
         vkCmdEndRenderPass(cmdBuffer);
     }
 
-    U0 begin(GLFWwindow* window, Device::It* device, VkRenderPass renderPass, VkFramebuffer* framebuffers, VkCommandBuffer cmdBuffer, U32 imageIndex, VkSurfaceKHR windowSurface) {
+    U0 begin(Context::It* ctx, VkRenderPass renderPass, VkFramebuffer* framebuffers, VkCommandBuffer cmdBuffer, U32 imageIndex) {
         VkClearValue clearColor = {{{0.0f, 0.0f, 0.0f, 1.0f}}};
-        VkExtent2D extends = SwapChain::extend(window, device, windowSurface);
+        VkExtent2D extends = Swapchain::extend(ctx);
 
         VkRenderPassBeginInfo createInfo;
         createInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
@@ -24,12 +24,12 @@ namespace RenderPass {
     }
 
 
-    U0 destroy(Device::It* device, VkRenderPass renderPass) {
-        vkDestroyRenderPass(device->logical, renderPass, NULL);
+    U0 destroy(Context::It* ctx, VkRenderPass renderPass) {
+        vkDestroyRenderPass(ctx->device->logical, renderPass, NULL);
     }
 
-    VkRenderPass create(Device::It* device, VkSurfaceKHR windowSurface) {
-        VkSurfaceFormatKHR surfaceFormat = SwapChain::getFormat(device, windowSurface);
+    VkRenderPass create(Context::It* ctx) {
+        VkSurfaceFormatKHR surfaceFormat = Swapchain::getFormat(ctx);
         VkFormat format = surfaceFormat.format;
 
         VkAttachmentDescription colorAttachment;
@@ -70,7 +70,7 @@ namespace RenderPass {
         renderPassInfo.dependencyCount = 0;
         renderPassInfo.pDependencies = NULL;
         
-        vkCreateRenderPass(device->logical, &renderPassInfo, NULL, &renderPass);
+        vkCreateRenderPass(ctx->device->logical, &renderPassInfo, NULL, &renderPass);
 
         return renderPass;
     }

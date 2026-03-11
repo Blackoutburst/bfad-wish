@@ -1,15 +1,14 @@
 #include <stdlib.h>
 
 #include "renderer/imageView.hh"
-#include "renderer/swapChain.hh"
+#include "renderer/swapchain.hh"
 
 namespace ImageView {
-    U0 destroy(Device::It* d, ImageView::It* imageView, VkSwapchainKHR swapchain) {
-        VkDevice device = d->logical;
-        U32 swapChainImagesCount = SwapChain::getImagesCount(d, swapchain);
+    U0 destroy(Context::It* ctx, ImageView::It* imageView, VkSwapchainKHR swapchain) {
+        U32 swapChainImagesCount = Swapchain::getImagesCount(ctx, swapchain);
 
         for (U32 i = 0; i < swapChainImagesCount; i++) {
-            vkDestroyImageView(device, imageView->imageView[i], NULL);
+            vkDestroyImageView(ctx->device->logical, imageView->imageView[i], NULL);
         }
 
         free(imageView->swapChainImages);
@@ -17,13 +16,12 @@ namespace ImageView {
         free(imageView);
     }
 
-    ImageView::It* create(Device::It* d, VkSwapchainKHR swapchain, VkSurfaceKHR windowSurface) {
+    ImageView::It* create(Context::It* ctx, VkSwapchainKHR swapchain) {
         ImageView::It* parent = (ImageView::It*)malloc(sizeof(ImageView::It));
         VkImageView* imageView;
-        VkDevice device = d->logical;
-        U32 swapChainImagesCount = SwapChain::getImagesCount(d, swapchain);
-        VkImage* swapChainImages = SwapChain::getImages(d, swapchain);
-        VkSurfaceFormatKHR surfaceFormat = SwapChain::getFormat(d, windowSurface);
+        U32 swapChainImagesCount = Swapchain::getImagesCount(ctx, swapchain);
+        VkImage* swapChainImages = Swapchain::getImages(ctx, swapchain);
+        VkSurfaceFormatKHR surfaceFormat = Swapchain::getFormat(ctx);
         VkFormat format = surfaceFormat.format;
 
         imageView = (VkImageView*)malloc(sizeof(VkImageView) * swapChainImagesCount);
@@ -45,7 +43,7 @@ namespace ImageView {
             createInfo.subresourceRange.levelCount = 1;
             createInfo.subresourceRange.baseArrayLayer = 0;
             createInfo.subresourceRange.layerCount = 1;
-            vkCreateImageView(device, &createInfo, NULL, &imageView[i]);
+            vkCreateImageView(ctx->device->logical, &createInfo, NULL, &imageView[i]);
         }
 
         parent->imageView = imageView;

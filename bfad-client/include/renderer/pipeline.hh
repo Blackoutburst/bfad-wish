@@ -4,26 +4,26 @@
 #include <GLFW/glfw3.h>
 
 #include "types.hh"
-#include "devices/devices.hh"
+#include "context.hh"
 
 namespace Pipeline {
     VkPipelineShaderStageCreateInfo createShader(VkShaderStageFlagBits stage, VkShaderModule shader);
     VkPipelineDynamicStateCreateInfo createDynamicState(U0);
     VkPipelineVertexInputStateCreateInfo createVertexInput(U0);
     VkPipelineInputAssemblyStateCreateInfo createInputAssembly(U0);
-    VkViewport createViewport(GLFWwindow* window, Device::It* device, VkSurfaceKHR windowSurface);
-    VkRect2D createScissor(GLFWwindow* window, Device::It* device, VkSurfaceKHR windowSurface);
+    VkViewport createViewport(Context::It* ctx);
+    VkRect2D createScissor(Context::It* ctx);
     VkPipelineViewportStateCreateInfo createViewportState(VkViewport* viewport, VkRect2D* scissor);
     VkPipelineRasterizationStateCreateInfo createRasterizerState(U0);
     VkPipelineMultisampleStateCreateInfo createMultisamplingState(U0);
     VkPipelineColorBlendAttachmentState createColorBlendAttachmentState(U0);
     VkPipelineColorBlendStateCreateInfo createColorBlendState(VkPipelineColorBlendAttachmentState* colorBlendAttachment);
-    U0 destroy(Device::It* device, VkPipeline graphicsPipeline);
-    VkPipeline create(GLFWwindow* window, Device::It* device, VkPipelineLayout layout, VkShaderModule vertexShader, VkShaderModule fragmentShader, VkRenderPass renderPass, VkSurfaceKHR windowSurface);
+    U0 destroy(Context::It* ctx, VkPipeline graphicsPipeline);
+    VkPipeline create(Context::It* ctx, VkPipelineLayout layout, VkShaderModule vertexShader, VkShaderModule fragmentShader, VkRenderPass renderPass);
 
     namespace Layout {
-        U0 remove(Device::It* device, VkPipelineLayout layout);
-        U0 destroy(Device::It* device, VkPipelineLayout pipelineLayout);
-        VkPipelineLayout create(Device::It* device);
+        U0 remove(Context::It* ctx, VkPipelineLayout layout);
+        U0 destroy(Context::It* ctx, VkPipelineLayout pipelineLayout);
+        VkPipelineLayout create(Context::It* ctx);
     }
 }

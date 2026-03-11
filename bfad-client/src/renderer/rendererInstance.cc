@@ -11,8 +11,8 @@
 #include "utils/vkerror.hh"
 
 namespace RendererInstance {
-    U0 destroy(VkInstance instance) {
-        vkDestroyInstance(instance, NULL);
+    U0 destroy(Context::It* ctx) {
+        vkDestroyInstance(ctx->instance, NULL);
     }
 
     VkInstance create(U0) {

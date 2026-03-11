@@ -16,11 +16,11 @@ namespace CommandBuffer {
         vkBeginCommandBuffer(cmdBuffer, &createInfo);
     }
 
-    U0 destroy(VkCommandBuffer cmdBuffer, VkCommandPool cmdPool, Device::It* device) {
-        vkFreeCommandBuffers(device->logical, cmdPool, 1, &cmdBuffer);
+    U0 destroy(Context::It* ctx, VkCommandBuffer cmdBuffer, VkCommandPool cmdPool) {
+        vkFreeCommandBuffers(ctx->device->logical, cmdPool, 1, &cmdBuffer);
     }
 
-    VkCommandBuffer create(VkCommandPool cmdPool, Device::It* device) {
+    VkCommandBuffer create(Context::It* ctx, VkCommandPool cmdPool) {
         VkCommandBuffer cmdBuffer;
 
         VkCommandBufferAllocateInfo createInfo;
@@ -30,7 +30,7 @@ namespace CommandBuffer {
         createInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
         createInfo.commandBufferCount = 1;
 
-        vkAllocateCommandBuffers(device->logical, &createInfo, &cmdBuffer);
+        vkAllocateCommandBuffers(ctx->device->logical, &createInfo, &cmdBuffer);
         
         return cmdBuffer;
     }

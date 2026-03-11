@@ -3,9 +3,9 @@
 #include <vulkan/vulkan.h>
 
 #include "types.hh"
-#include "devices/devices.hh"
+#include "context.hh"
 
 namespace CommandPool {
-    U0 destroy(VkCommandPool cmdPool, Device::It* device);
-    VkCommandPool create(Device::It* device);
+    U0 destroy(Context::It* ctx, VkCommandPool cmdPool);
+    VkCommandPool create(Context::It* ctx);
 }
