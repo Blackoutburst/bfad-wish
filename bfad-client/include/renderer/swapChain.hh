@@ -5,6 +5,8 @@
 #include "types.hh"
 #include "context.hh"
 
+#include "renderer/imageView.hh"
+
 namespace Swapchain {
     VkImage* getImages(Context::It* ctx, VkSwapchainKHR swapchain);
     U32 getImagesCount(Context::It* ctx, VkSwapchainKHR swapchain);

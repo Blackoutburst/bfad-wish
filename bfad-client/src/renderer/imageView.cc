@@ -2,15 +2,18 @@
 
 #include "renderer/imageView.hh"
 #include "renderer/swapchain.hh"
+#include "utils/semaphore.hh"
 
 namespace ImageView {
-    U0 destroy(Context::It* ctx, ImageView::It* imageView, VkSwapchainKHR swapchain) {
-        U32 swapChainImagesCount = Swapchain::getImagesCount(ctx, swapchain);
-
-        for (U32 i = 0; i < swapChainImagesCount; i++) {
+    U0 destroy(Context::It* ctx, ImageView::It* imageView) {
+        for (U32 i = 0; i < imageView->swapChainImagesCount; i++) {
             vkDestroyImageView(ctx->device->logical, imageView->imageView[i], NULL);
+            Semaphore::destroy(ctx, imageView->pSemaphore[i]);
+            Semaphore::destroy(ctx, imageView->rSemaphore[i]);
         }
 
+        free(imageView->pSemaphore);
+        free(imageView->rSemaphore);
         free(imageView->swapChainImages);
         free(imageView->imageView);
         free(imageView);
@@ -25,6 +28,9 @@ namespace ImageView {
         VkFormat format = surfaceFormat.format;
 
         imageView = (VkImageView*)malloc(sizeof(VkImageView) * swapChainImagesCount);
+
+        VkSemaphore* pSemaphore = (VkSemaphore*)malloc(swapChainImagesCount * sizeof(VkSemaphore));
+        VkSemaphore* rSemaphore = (VkSemaphore*)malloc(swapChainImagesCount * sizeof(VkSemaphore));
 
         for (U32 i = 0; i < swapChainImagesCount; i++) {
             VkImageViewCreateInfo createInfo;
@@ -44,11 +50,18 @@ namespace ImageView {
             createInfo.subresourceRange.baseArrayLayer = 0;
             createInfo.subresourceRange.layerCount = 1;
             vkCreateImageView(ctx->device->logical, &createInfo, NULL, &imageView[i]);
+
+            pSemaphore[i] = Semaphore::create(ctx);
+            rSemaphore[i] = Semaphore::create(ctx);
         }
 
+        parent->currentFrame = 0;
+        parent->imageIndex = 0;
         parent->imageView = imageView;
         parent->swapChainImages = swapChainImages;
         parent->swapChainImagesCount = swapChainImagesCount;
+        parent->pSemaphore = pSemaphore;
+        parent->rSemaphore = rSemaphore;
         
         return parent;
     }

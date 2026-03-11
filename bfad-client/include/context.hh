@@ -12,8 +12,9 @@ namespace Context {
         VkInstance instance;
         Device::It* device;
         VkSurfaceKHR surface;
+        VkDebugUtilsMessengerEXT loggerCallback;
     };
 
-    Context::It* create(GLFWwindow* window, VkInstance instance, Device::It* device, VkSurfaceKHR surface);
+    Context::It* create(GLFWwindow* window);
     U0 destroy(Context::It* context);
 }

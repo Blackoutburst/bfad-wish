@@ -7,12 +7,16 @@
 
 namespace ImageView {
     struct It {
+        U32 currentFrame;
+        U32 imageIndex;
         VkImageView* imageView;
         VkImage* swapChainImages;
         U32 swapChainImagesCount;
+        VkSemaphore* pSemaphore;
+        VkSemaphore* rSemaphore;
     };
 
-    U0 destroy(Context::It* ctx, ImageView::It* imageView, VkSwapchainKHR swapchain);
+    U0 destroy(Context::It* ctx, ImageView::It* imageView);
     ImageView::It* create(Context::It* ctx, VkSwapchainKHR swapchain);
 }
 
