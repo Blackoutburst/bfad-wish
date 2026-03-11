@@ -35,6 +35,7 @@ static VkCommandPool cmdPool;
 static VkCommandBuffer cmdBuffer;
 static VkFence drawFence;
 static Buffer::It* vertexBuffer;
+static Buffer::It* indexBuffer;
 
 U0 vkDrawTriangle(U0) {
     Fence::wait(ctx, drawFence);
@@ -72,8 +73,10 @@ U0 vkDrawTriangle(U0) {
     VkDeviceSize offsets[] = { 0 };
 
     vkCmdBindVertexBuffers(cmdBuffer, 0, 1, vertexBuffers, offsets);
+    vkCmdBindIndexBuffer(cmdBuffer, indexBuffer->handle, 0, VK_INDEX_TYPE_UINT32);
 
-    vkCmdDraw(cmdBuffer, 6, 1, 0, 0);
+    //vkCmdDraw(cmdBuffer, 6, 1, 0, 0);
+    vkCmdDrawIndexed(cmdBuffer, 6, 1, 0, 0, 0);
 
     RenderPass::end(cmdBuffer);
     CommandBuffer::end(cmdBuffer);
@@ -123,23 +126,29 @@ U0 vkInit(GLFWwindow* window) {
     drawFence = Fence::create(ctx);
 
     F32 vertexData[30] = {
-        -0.5, -0.5, 0.0, 0.0, 1.0,
-         0.5, -0.5, 1.0, 0.0, 0.0,
-        -0.5,  0.5, 1.0, 0.0, 0.0,
-        
-        -0.5,  0.5, 1.0, 0.0, 0.0,
-         0.5, -0.5, 1.0, 0.0, 0.0,
-         0.5,  0.5, 0.0, 1.0, 0.0,
+        -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
+        0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+        0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+        -0.5f, 0.5f, 1.0f, 1.0f, 1.0f,
+    };
+
+    U32 indexData[6] = {
+        0, 1, 2, 
+        2, 3, 0,
     };
 
     vertexBuffer = Buffer::create(ctx, sizeof(vertexData[0]) * 30, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
     Buffer::upload(ctx, vertexBuffer, vertexData, sizeof(vertexData[0]) * 30);
+
+    indexBuffer = Buffer::create(ctx, sizeof(indexData[0]) * 30, VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+    Buffer::upload(ctx, indexBuffer, indexData, sizeof(indexData[0]) * 6);
 }
 
 U0 vkClean(U0) {
     vkDeviceWaitIdle(ctx->device->logical);
 
     Buffer::destroy(ctx, vertexBuffer);
+    Buffer::destroy(ctx, indexBuffer);
 
     Fence::destroy(ctx, drawFence);
 
