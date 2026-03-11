@@ -140,7 +140,7 @@ U0 vkInit(GLFWwindow* window) {
     vertexBuffer = Buffer::create(ctx, sizeof(vertexData[0]) * 30, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
     Buffer::upload(ctx, vertexBuffer, vertexData, sizeof(vertexData[0]) * 30);
 
-    indexBuffer = Buffer::create(ctx, sizeof(indexData[0]) * 30, VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+    indexBuffer = Buffer::create(ctx, sizeof(indexData[0]) * 6, VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
     Buffer::upload(ctx, indexBuffer, indexData, sizeof(indexData[0]) * 6);
 }
 
