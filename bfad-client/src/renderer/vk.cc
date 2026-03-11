@@ -129,7 +129,6 @@ U0 vkInit(GLFWwindow* window) {
     };
 
     vertexBuffer = Buffer::create(ctx, sizeof(vertexData[0]) * 15, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-
     Buffer::upload(ctx, vertexBuffer, vertexData, sizeof(vertexData[0]) * 15);
 }
 
