@@ -1,3 +1,4 @@
+#include <string.h>
 
 #include "math/math.hh"
 #include "math/matrix.hh"
@@ -35,6 +36,10 @@ namespace Matrix {
         mat->m31 = 0.0f;
         mat->m32 = 0.0f;
         mat->m33 = 1.0f;
+    }
+
+    U0 writeTo(Matrix::It* mat, F32* dest) {
+        memcpy(dest, mat, sizeof(F32) * 16);
     }
 
     F32* getValues(Matrix::It* mat) {

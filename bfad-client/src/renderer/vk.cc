@@ -26,6 +26,7 @@
 #include "renderer/vertexArray.hh"
 #include "math/matrix.hh"
 #include "math/math.hh"
+#include "geom.hh"
 
 static Context::It* ctx;
 static RenderSystem::It* renderSystem;
@@ -68,30 +69,15 @@ U0 vkDrawTriangle(U0) {
     vkCmdBindVertexBuffers(cmdBuffer, 0, 1, vertexBuffers, offsets);
     vkCmdBindIndexBuffer(cmdBuffer, indexBuffer->handle, 0, VK_INDEX_TYPE_UINT32);
 
-    vkCmdDrawIndexed(cmdBuffer, 36, 1, 0, 0, 0);
+    vkCmdDrawIndexed(cmdBuffer, Cube::indexCount, 1, 0, 0, 0);
 
     RenderPass::end(cmdBuffer);
     CommandBuffer::end(cmdBuffer);
 
-    F32 uniformData[48] = {
-        // Model
-        model->m00, model->m01, model->m02, model->m03,
-        model->m10, model->m11, model->m12, model->m13,
-        model->m20, model->m21, model->m22, model->m23,
-        model->m30, model->m31, model->m32, model->m33,
-
-        // View
-        view->m00, view->m01, view->m02, view->m03,
-        view->m10, view->m11, view->m12, view->m13,
-        view->m20, view->m21, view->m22, view->m23,
-        view->m30, view->m31, view->m32, view->m33,
-
-        // Projection
-        projection->m00, projection->m01, projection->m02, projection->m03,
-        projection->m10, projection->m11, projection->m12, projection->m13,
-        projection->m20, projection->m21, projection->m22, projection->m23,
-        projection->m30, projection->m31, projection->m32, projection->m33,
-    };
+    F32 uniformData[48];
+    Matrix::writeTo(model, uniformData);
+    Matrix::writeTo(view, uniformData + 16);
+    Matrix::writeTo(projection, uniformData + 32);
 
     UniformBuffer::update(uniformBuffer, uniformData, 192);
 
@@ -118,64 +104,11 @@ U0 vkInit(GLFWwindow* window) {
 
     drawFence = Fence::create(ctx);
 
-    F32 vertexData[144] = {
-        // Front
-        -0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f,
-         0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f,
+    vertexBuffer = Buffer::create(ctx, sizeof(Cube::vertex[0]) * Cube::vertexCount, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
+    Buffer::upload(ctx, vertexBuffer, Cube::vertex, sizeof(Cube::vertex[0]) * Cube::vertexCount);
 
-        // Back
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f,
-         0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f,
-         0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 0.0f,
-
-        // Left
-        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 1.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 1.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f, 0.0f, 1.0f,
-
-        // Right
-         0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 0.0f,
-         0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 0.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 0.0f,
-
-        // Top
-        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 1.0f,
-         0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 1.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 1.0f,
-
-        // Bottom
-        -0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 1.0f,
-         0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 1.0f,
-    };
-
-    U32 indexData[36] = {
-        // Front
-        0,  1,  2,   2,  3,  0,
-        // Back
-        5,  4,  7,   7,  6,  5,
-        // Left
-        9,  8,  11,  11, 10, 9,
-        // Right
-        12, 13, 14,  14, 15, 12,
-        // Top
-        16, 17, 18,  18, 19, 16,
-        // Bottom
-        22, 23, 20,  20, 21, 22,
-    };
-
-    vertexBuffer = Buffer::create(ctx, sizeof(vertexData[0]) * 144, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
-    Buffer::upload(ctx, vertexBuffer, vertexData, sizeof(vertexData[0]) * 144);
-
-    indexBuffer = Buffer::create(ctx, sizeof(indexData[0]) * 36, VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
-    Buffer::upload(ctx, indexBuffer, indexData, sizeof(indexData[0]) * 36);
+    indexBuffer = Buffer::create(ctx, sizeof(Cube::index[0]) * Cube::indexCount, VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
+    Buffer::upload(ctx, indexBuffer, Cube::index, sizeof(Cube::index[0]) * Cube::indexCount);
 
 
     model = Matrix::create();

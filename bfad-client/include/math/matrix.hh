@@ -50,6 +50,7 @@ namespace Matrix {
     Matrix::It* create(U0);
     U0 destroy(Matrix::It* mat);
     F32* getValues(Matrix::It* mat);
+    U0 writeTo(Matrix::It* mat, F32* dest);
     U0 setIdentity(Matrix::It* mat);
     F32 get(Matrix::It* mat, U32 index);
     U0 multiply(Matrix::It* result, Matrix::It* left, Matrix::It* right);
