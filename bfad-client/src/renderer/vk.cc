@@ -56,7 +56,6 @@ U0 vkDrawTriangle(U0) {
     Fence::reset(ctx, drawFence);
 
     CommandBuffer::begin(cmdBuffer);
-    
     RenderPass::begin(ctx, renderSystem->renderPass, renderSystem->framebuffers, cmdBuffer, renderSystem->imageView->imageIndex);
     
     VertexArray::bind(vao, cmdBuffer);
@@ -68,7 +67,6 @@ U0 vkDrawTriangle(U0) {
 
     vkCmdBindVertexBuffers(cmdBuffer, 0, 1, vertexBuffers, offsets);
     vkCmdBindIndexBuffer(cmdBuffer, indexBuffer->handle, 0, VK_INDEX_TYPE_UINT32);
-
     vkCmdDrawIndexed(cmdBuffer, Cube::indexCount, 1, 0, 0, 0);
 
     RenderPass::end(cmdBuffer);
