@@ -11,3 +11,4 @@ U0 vkClean(U0);
 
 Matrix::It* getViewMatrix(U0);
 Matrix::It* getProjectionMatrix(U0);
+Matrix::It* getProjection2dMatrix(U0);

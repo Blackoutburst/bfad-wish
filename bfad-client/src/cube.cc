@@ -14,7 +14,7 @@ namespace Cube {
         cube->model = Matrix::create();
         cube->vertexBuffer = Buffer::create(ctx, sizeof(Cube::vertex[0]) * Cube::vertexCount, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
         cube->indexBuffer = Buffer::create(ctx, sizeof(Cube::index[0]) * Cube::indexCount, VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
-        cube->shaderProgram = ShaderProgram::create(ctx, "./shader/triangleVert.spv", "./shader/triangleFrag.spv");
+        cube->shaderProgram = ShaderProgram::create(ctx, "./shader/cubeVert.spv", "./shader/cubeFrag.spv");
         cube->uniformBuffer = UniformBuffer::create(ctx, 0, 192);
         
         Buffer::upload(ctx, cube->vertexBuffer, Cube::vertex, sizeof(Cube::vertex[0]) * Cube::vertexCount);

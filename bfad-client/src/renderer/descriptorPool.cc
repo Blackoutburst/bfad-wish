@@ -1,6 +1,6 @@
 #include "renderer/descriptorPool.hh"
 
-#define UNIFORM_BUFFER_COUNT 1
+#define UNIFORM_BUFFER_COUNT 2
 
 namespace DescriptorPool {
 
