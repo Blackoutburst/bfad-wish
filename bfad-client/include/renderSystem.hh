@@ -14,9 +14,6 @@ namespace RenderSystem {
         ImageView::It* imageView;
         VkFramebuffer* framebuffers;
         VkRenderPass renderPass;
-        VkImage depthImage;
-        VkDeviceMemory depthImageMemory;
-        VkImageView depthImageView;
     };
 
     RenderSystem::It* create(Context::It* ctx);
