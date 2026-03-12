@@ -19,4 +19,7 @@ namespace VectorF {
     U0 zero(VectorF::It* vec);
     U0 destroy(VectorF::It* vec);
     VectorF::It* create(U0);
+    U0 writeTo2(VectorF::It* vec, F32* dest);
+    U0 writeTo3(VectorF::It* vec, F32* dest);
+    U0 writeTo4(VectorF::It* vec, F32* dest);
 }

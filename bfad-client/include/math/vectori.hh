@@ -19,4 +19,7 @@ namespace VectorI {
     U0 zero(VectorI::It* vec);
     U0 destroy(VectorI::It* vec);
     VectorI::It* create(U0);
+    U0 writeTo2(VectorI::It* vec, I32* dest);
+    U0 writeTo3(VectorI::It* vec, I32* dest);
+    U0 writeTo4(VectorI::It* vec, I32* dest);
 }

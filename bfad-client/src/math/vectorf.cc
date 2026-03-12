@@ -1,3 +1,4 @@
+#include <string.h>
 #include "math/vectorf.hh"
 
 namespace VectorF {
@@ -40,5 +41,17 @@ namespace VectorF {
         zero(vec);
 
         return vec;
+    }
+
+    U0 writeTo2(VectorF::It* vec, F32* dest) {
+        memcpy(dest, vec, sizeof(F32) * 2);
+    }
+
+    U0 writeTo3(VectorF::It* vec, F32* dest) {
+        memcpy(dest, vec, sizeof(F32) * 3);
+    }
+
+    U0 writeTo4(VectorF::It* vec, F32* dest) {
+        memcpy(dest, vec, sizeof(F32) * 4);
     }
 }

@@ -1,3 +1,4 @@
+#include <string.h>
 #include "math/vectori.hh"
 
 namespace VectorI {
@@ -40,5 +41,17 @@ namespace VectorI {
         zero(vec);
 
         return vec;
+    }
+
+    U0 writeTo2(VectorI::It* vec, I32* dest) {
+        memcpy(dest, vec, sizeof(I32) * 2);
+    }
+
+    U0 writeTo3(VectorI::It* vec, I32* dest) {
+        memcpy(dest, vec, sizeof(I32) * 3);
+    }
+
+    U0 writeTo4(VectorI::It* vec, I32* dest) {
+        memcpy(dest, vec, sizeof(I32) * 4);
     }
 }
