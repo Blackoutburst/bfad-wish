@@ -17,7 +17,7 @@ namespace Buffer {
         return UINT32_MAX;
     }
 
-    Buffer::It* create(Context::It* ctx, U32 size, VkBufferUsageFlagBits usage, VkMemoryPropertyFlags memProps) {
+    Buffer::It* create(Context::It* ctx, U32 size, VkBufferUsageFlagBits usage) {
         VkBufferCreateInfo createInfo;
         createInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
         createInfo.pNext = NULL;
@@ -38,7 +38,7 @@ namespace Buffer {
         allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
         allocInfo.pNext = NULL;
         allocInfo.allocationSize = memReqs.size;
-        allocInfo.memoryTypeIndex = findMemoryType(ctx, memReqs.memoryTypeBits, memProps);
+        allocInfo.memoryTypeIndex = findMemoryType(ctx, memReqs.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
         vkAllocateMemory(ctx->device->logical, &allocInfo, NULL, &buffer->memory);
         vkBindBufferMemory(ctx->device->logical, buffer->handle, buffer->memory, 0);

@@ -167,10 +167,6 @@ namespace Pipeline {
     }
 
     VkPipeline create(Context::It* ctx, VkPipelineLayout layout, ShaderProgram::It* shaderProgram, VkRenderPass renderPass) {
-        UNUSED_VAR(layout);
-        
-        
-
         VkPipelineVertexInputStateCreateInfo vertexInput = createVertexInput();
         VkPipelineInputAssemblyStateCreateInfo inputAssembly = createInputAssembly();
         VkViewport viewPort = createViewport(ctx);
@@ -214,15 +210,15 @@ namespace Pipeline {
             vkDestroyPipelineLayout(ctx->device->logical, layout, NULL);
         }
 
-        VkPipelineLayout create(Context::It* ctx) {
+        VkPipelineLayout create(Context::It* ctx, U32 count, VkDescriptorSetLayout setLayout) {
             VkPipelineLayout pipelineLayout;
             
             VkPipelineLayoutCreateInfo createInfo;
             createInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
             createInfo.pNext = NULL;
             createInfo.flags = 0;
-            createInfo.setLayoutCount = 0;
-            createInfo.pSetLayouts = NULL;
+            createInfo.setLayoutCount = count;
+            createInfo.pSetLayouts = &setLayout;
             createInfo.pushConstantRangeCount = 0;
             createInfo.pPushConstantRanges = NULL;
             

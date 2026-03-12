@@ -114,7 +114,7 @@ U0 vkInit(GLFWwindow* window) {
 
     shaderProgram = ShaderProgram::create(ctx, "./shader/triangleVert.spv", "./shader/triangleFrag.spv");
     
-    pipelineLayout = Pipeline::Layout::create(ctx);
+    pipelineLayout = Pipeline::Layout::create(ctx, 0, NULL);
     pipeline = Pipeline::create(ctx, pipelineLayout, shaderProgram, renderSystem->renderPass);
     
     cmdPool = CommandPool::create(ctx);
@@ -134,10 +134,10 @@ U0 vkInit(GLFWwindow* window) {
         2, 3, 0,
     };
 
-    vertexBuffer = Buffer::create(ctx, sizeof(vertexData[0]) * 30, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+    vertexBuffer = Buffer::create(ctx, sizeof(vertexData[0]) * 30, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
     Buffer::upload(ctx, vertexBuffer, vertexData, sizeof(vertexData[0]) * 30);
 
-    indexBuffer = Buffer::create(ctx, sizeof(indexData[0]) * 6, VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+    indexBuffer = Buffer::create(ctx, sizeof(indexData[0]) * 6, VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
     Buffer::upload(ctx, indexBuffer, indexData, sizeof(indexData[0]) * 6);
 }
 
