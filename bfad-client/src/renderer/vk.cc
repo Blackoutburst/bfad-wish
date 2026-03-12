@@ -23,6 +23,8 @@
 #include "utils/semaphore.hh"
 #include "utils/fence.hh"
 #include "utils/buffer.hh"
+#include "utils/uniformBuffer.hh"
+#include "math/matrix.hh"
 
 static Context::It* ctx;
 static RenderSystem::It* renderSystem;
@@ -34,6 +36,11 @@ static VkCommandBuffer cmdBuffer;
 static VkFence drawFence;
 static Buffer::It* vertexBuffer;
 static Buffer::It* indexBuffer;
+static UniformBuffer::It* uniformBuffer;
+
+static Matrix::It* model;
+static Matrix::It* view;
+static Matrix::It* projection;
 
 U0 vkDrawTriangle(U0) {
     Fence::wait(ctx, drawFence);
@@ -73,13 +80,14 @@ U0 vkDrawTriangle(U0) {
     vkCmdBindVertexBuffers(cmdBuffer, 0, 1, vertexBuffers, offsets);
     vkCmdBindIndexBuffer(cmdBuffer, indexBuffer->handle, 0, VK_INDEX_TYPE_UINT32);
 
-    //vkCmdDraw(cmdBuffer, 6, 1, 0, 0);
     vkCmdDrawIndexed(cmdBuffer, 6, 1, 0, 0, 0);
 
     RenderPass::end(cmdBuffer);
     CommandBuffer::end(cmdBuffer);
 
     VkPipelineStageFlags waitStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+
+    UniformBuffer::update(uniformBuffer, NULL, 192);
 
     VkSubmitInfo submitInfo;
     submitInfo.pNext = NULL;
@@ -139,10 +147,23 @@ U0 vkInit(GLFWwindow* window) {
 
     indexBuffer = Buffer::create(ctx, sizeof(indexData[0]) * 6, VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
     Buffer::upload(ctx, indexBuffer, indexData, sizeof(indexData[0]) * 6);
+
+    uniformBuffer = UniformBuffer::create(ctx, 1, 192);
+
+    model = Matrix::create();
+    view = Matrix::create();
+    projection = Matrix::create();
+    Matrix::projection(projection, 1280, 720, 90, 0.1, 1000);
 }
 
 U0 vkClean(U0) {
     vkDeviceWaitIdle(ctx->device->logical);
+
+    UniformBuffer::destroy(ctx, uniformBuffer);
+
+    Matrix::destroy(model);
+    Matrix::destroy(view);
+    Matrix::destroy(projection);
 
     Buffer::destroy(ctx, vertexBuffer);
     Buffer::destroy(ctx, indexBuffer);

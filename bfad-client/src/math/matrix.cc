@@ -1,4 +1,3 @@
-#include <stdlib.h>
 
 #include "math/math.hh"
 #include "math/matrix.hh"

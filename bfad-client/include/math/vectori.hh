@@ -2,7 +2,7 @@
 
 #include <math.h>
 
-#incluce "types.hh"
+#include "types.hh"
 
 namespace VectorI {
     struct It {
@@ -12,11 +12,11 @@ namespace VectorI {
         I32 w;
     };
 
-    U8 equals(VectorI* a, VectorI* b);
-    U0 set(VectorI* vec, I32 x, I32 y, I32 z, I32 w);
-    U0 normalize(VectorI* vec);
-    I32 length(VectorI* vec);
-    U0 zero(VectorI* vec);
-    U0 destroy(VectorI* vec);
+    U8 equals(VectorI::It* a, VectorI::It* b);
+    U0 set(VectorI::It* vec, I32 x, I32 y, I32 z, I32 w);
+    U0 normalize(VectorI::It* vec);
+    I32 length(VectorI::It* vec);
+    U0 zero(VectorI::It* vec);
+    U0 destroy(VectorI::It* vec);
     VectorI::It* create(U0);
 }
