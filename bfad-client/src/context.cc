@@ -8,6 +8,7 @@
 #include "devices/physicalDevice.hh"
 #include "devices/devices.hh"
 #include "debug/logCallback.hh"
+#include "renderer/descriptorPool.hh"
 #include "utils/args.hh"
 
 namespace Context {
@@ -33,10 +34,14 @@ namespace Context {
         ctx->surface = windowSurface;
         ctx->loggerCallback = loggerCallback;
 
+        VkDescriptorPool descriptorPool = DescriptorPool::create(ctx);
+        ctx->descriptorPool = descriptorPool;
+
         return ctx;
     }
 
     U0 destroy(Context::It* ctx) {
+        DescriptorPool::destroy(ctx, ctx->descriptorPool);
         Device::destroy(ctx->device);
         WindowSurface::destroy(ctx);
         

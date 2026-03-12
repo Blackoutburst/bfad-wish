@@ -80,6 +80,8 @@ U0 vkDrawTriangle(U0) {
     vkCmdBindVertexBuffers(cmdBuffer, 0, 1, vertexBuffers, offsets);
     vkCmdBindIndexBuffer(cmdBuffer, indexBuffer->handle, 0, VK_INDEX_TYPE_UINT32);
 
+    UniformBuffer::bind(uniformBuffer, cmdBuffer, pipelineLayout);
+
     vkCmdDrawIndexed(cmdBuffer, 6, 1, 0, 0, 0);
 
     RenderPass::end(cmdBuffer);
@@ -87,7 +89,27 @@ U0 vkDrawTriangle(U0) {
 
     VkPipelineStageFlags waitStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 
-    UniformBuffer::update(uniformBuffer, NULL, 192);
+    F32 uniformData[48] = {
+        // Model
+        model->m00, model->m01, model->m02, model->m03,
+        model->m10, model->m11, model->m12, model->m13,
+        model->m20, model->m21, model->m22, model->m23,
+        model->m30, model->m31, model->m32, model->m33,
+
+        // View
+        view->m00, view->m01, view->m02, view->m03,
+        view->m10, view->m11, view->m12, view->m13,
+        view->m20, view->m21, view->m22, view->m23,
+        view->m30, view->m31, view->m32, view->m33,
+
+        // Projection
+        projection->m00, projection->m01, projection->m02, projection->m03,
+        projection->m10, projection->m11, projection->m12, projection->m13,
+        projection->m20, projection->m21, projection->m22, projection->m23,
+        projection->m30, projection->m31, projection->m32, projection->m33,
+    };
+
+    UniformBuffer::update(uniformBuffer, uniformData, 192);
 
     VkSubmitInfo submitInfo;
     submitInfo.pNext = NULL;
@@ -121,8 +143,10 @@ U0 vkInit(GLFWwindow* window) {
     renderSystem = RenderSystem::create(ctx);
 
     shaderProgram = ShaderProgram::create(ctx, "./shader/triangleVert.spv", "./shader/triangleFrag.spv");
+
+    uniformBuffer = UniformBuffer::create(ctx, 0, 192);
     
-    pipelineLayout = Pipeline::Layout::create(ctx, 0, NULL);
+    pipelineLayout = Pipeline::Layout::create(ctx, 1, uniformBuffer->setLayout);
     pipeline = Pipeline::create(ctx, pipelineLayout, shaderProgram, renderSystem->renderPass);
     
     cmdPool = CommandPool::create(ctx);
@@ -148,12 +172,12 @@ U0 vkInit(GLFWwindow* window) {
     indexBuffer = Buffer::create(ctx, sizeof(indexData[0]) * 6, VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
     Buffer::upload(ctx, indexBuffer, indexData, sizeof(indexData[0]) * 6);
 
-    uniformBuffer = UniformBuffer::create(ctx, 1, 192);
 
     model = Matrix::create();
     view = Matrix::create();
     projection = Matrix::create();
     Matrix::projection(projection, 1280, 720, 90, 0.1, 1000);
+    Matrix::translate3d(view, 0.0f, 0.0f, -2.0f);
 }
 
 U0 vkClean(U0) {

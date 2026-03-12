@@ -214,7 +214,7 @@ namespace Matrix {
         mat->m23 = mat->m23 * vec->z;
     }
 
-    U0 tanslate2d(Matrix::It* mat, F32 x, F32 y) {
+    U0 translate2d(Matrix::It* mat, F32 x, F32 y) {
         Matrix::It* src = create();
         copy(mat, src);
 
@@ -226,7 +226,7 @@ namespace Matrix {
         destroy(src);
     }
 
-    U0 tanslate2dP(Matrix::It* mat, VectorF::It* vec) {
+    U0 translate2dP(Matrix::It* mat, VectorF::It* vec) {
         Matrix::It* src = create();
         copy(mat, src);
 
@@ -238,7 +238,7 @@ namespace Matrix {
         destroy(src);
     }
 
-    U0 tanslate3d(Matrix::It* mat, F32 x, F32 y, F32 z) {
+    U0 translate3d(Matrix::It* mat, F32 x, F32 y, F32 z) {
         Matrix::It* src = create();
         copy(mat, src);
 
@@ -250,7 +250,7 @@ namespace Matrix {
         destroy(src);
     }
 
-    U0 tanslate3dP(Matrix::It* mat, VectorF::It* vec) {
+    U0 translate3dP(Matrix::It* mat, VectorF::It* vec) {
         Matrix::It* src = create();
         copy(mat, src);
 

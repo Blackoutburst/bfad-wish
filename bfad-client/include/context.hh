@@ -13,6 +13,7 @@ namespace Context {
         Device::It* device;
         VkSurfaceKHR surface;
         VkDebugUtilsMessengerEXT loggerCallback;
+        VkDescriptorPool descriptorPool;
     };
 
     Context::It* create(GLFWwindow* window);

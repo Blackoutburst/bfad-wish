@@ -8,7 +8,7 @@ struct UniformBuffer {
     float4x4 view;
     float4x4 projection;
 };
-ConstantBuffer<UniformBuffer> ubo;
+[[vk::binding(0)]] ConstantBuffer<UniformBuffer> ubo;
 
 struct VSOutput {
     float4 pos : SV_Position;
