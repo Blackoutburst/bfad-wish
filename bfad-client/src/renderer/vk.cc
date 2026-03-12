@@ -62,7 +62,7 @@ U0 vkDrawTriangle(U0) {
         RenderSystem::update(ctx, renderSystem);
         VkExtent2D ext = Swapchain::extend(ctx);
         Matrix::projection(projection, ext.width, ext.height, 90, 0.1, 1000);
-        Matrix::ortho2D(projection2d, 0.0f, (F32)ext.width, 0.0f, (F32)ext.height, -1.0f, 1.0f);
+        Matrix::ortho2D(projection2d, 0.0f, ext.width, 0.0f, ext.height, -1.0f, 1.0f);
         return;
     }
 
@@ -96,7 +96,7 @@ U0 vkInit(GLFWwindow* window) {
     projection2d = Matrix::create();
     VkExtent2D ext = Swapchain::extend(ctx);
     Matrix::projection(projection, ext.width, ext.height, 90, 0.1, 1000);
-    Matrix::ortho2D(projection2d, 0.0f, (F32)ext.width, 0.0f, (F32)ext.height, -1.0f, 1.0f);
+    Matrix::ortho2D(projection2d, 0.0f, ext.width, 0.0f, ext.height, -1.0f, 1.0f);
     Matrix::translate3d(view, 0.0f, 0.0f, -4.0f);
 
     cube = Cube::create(ctx, renderSystem);
