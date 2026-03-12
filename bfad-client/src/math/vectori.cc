@@ -1,4 +1,6 @@
+#include <stdlib.h>
 #include <string.h>
+
 #include "math/vectori.hh"
 
 namespace VectorI {
