@@ -19,4 +19,6 @@ namespace RenderSystem {
     RenderSystem::It* create(Context::It* ctx);
     U0 destroy(Context::It* ctx, RenderSystem::It* renderSystem);
     U0 update(Context::It* ctx, RenderSystem::It* renderSystem);
+    U0 submit(Context::It* ctx, RenderSystem::It* renderSystem, VkCommandBuffer cmdBuffer, VkFence fence);
+    U0 present(Context::It* ctx, RenderSystem::It* renderSystem);
 }

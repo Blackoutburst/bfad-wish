@@ -14,6 +14,7 @@ namespace Swapchain {
     VkPresentModeKHR getPresentMode(Context::It* ctx);
     VkSurfaceCapabilitiesKHR getCapabilities(Context::It* ctx);
     VkExtent2D extend(Context::It* ctx);
+    U0 setViewport(Context::It* ctx, VkCommandBuffer cmdBuffer);
     U0 destroy(Context::It* ctx, VkSwapchainKHR swapchain);
     VkSwapchainKHR create(Context::It* ctx);
 }

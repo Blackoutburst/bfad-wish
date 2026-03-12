@@ -13,20 +13,21 @@ namespace CommandBuffer {
         createInfo.flags = 0;
         createInfo.pInheritanceInfo = NULL;
 
+        vkResetCommandBuffer(cmdBuffer, 0);
         vkBeginCommandBuffer(cmdBuffer, &createInfo);
     }
 
-    U0 destroy(Context::It* ctx, VkCommandBuffer cmdBuffer, VkCommandPool cmdPool) {
-        vkFreeCommandBuffers(ctx->device->logical, cmdPool, 1, &cmdBuffer);
+    U0 destroy(Context::It* ctx, VkCommandBuffer cmdBuffer) {
+        vkFreeCommandBuffers(ctx->device->logical, ctx->cmdPool, 1, &cmdBuffer);
     }
 
-    VkCommandBuffer create(Context::It* ctx, VkCommandPool cmdPool) {
+    VkCommandBuffer create(Context::It* ctx) {
         VkCommandBuffer cmdBuffer;
 
         VkCommandBufferAllocateInfo createInfo;
         createInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
         createInfo.pNext = NULL;
-        createInfo.commandPool = cmdPool;
+        createInfo.commandPool = ctx->cmdPool;
         createInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
         createInfo.commandBufferCount = 1;
 

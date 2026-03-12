@@ -76,6 +76,24 @@ namespace Swapchain {
         };
     }
 
+    U0 setViewport(Context::It* ctx, VkCommandBuffer cmdBuffer) {
+        VkExtent2D ext = extend(ctx);
+
+        VkViewport viewport;
+        viewport.x = 0.0f;
+        viewport.y = 0.0f;
+        viewport.width = (F32)ext.width;
+        viewport.height = (F32)ext.height;
+        viewport.minDepth = 0.0f;
+        viewport.maxDepth = 1.0f;
+        vkCmdSetViewport(cmdBuffer, 0, 1, &viewport);
+
+        VkRect2D scissor;
+        scissor.offset = {0, 0};
+        scissor.extent = ext;
+        vkCmdSetScissor(cmdBuffer, 0, 1, &scissor);
+    }
+
     U0 destroy(Context::It* ctx, VkSwapchainKHR swapchain) {
         vkDestroySwapchainKHR(ctx->device->logical, swapchain, NULL);
     }

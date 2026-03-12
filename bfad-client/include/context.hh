@@ -14,6 +14,7 @@ namespace Context {
         VkSurfaceKHR surface;
         VkDebugUtilsMessengerEXT loggerCallback;
         VkDescriptorPool descriptorPool;
+        VkCommandPool cmdPool;
     };
 
     Context::It* create(GLFWwindow* window);

@@ -9,6 +9,7 @@
 #include "devices/devices.hh"
 #include "debug/logCallback.hh"
 #include "renderer/descriptorPool.hh"
+#include "devices/commandPool.hh"
 #include "utils/args.hh"
 
 namespace Context {
@@ -37,10 +38,13 @@ namespace Context {
         VkDescriptorPool descriptorPool = DescriptorPool::create(ctx);
         ctx->descriptorPool = descriptorPool;
 
+        ctx->cmdPool = CommandPool::create(ctx);
+
         return ctx;
     }
 
     U0 destroy(Context::It* ctx) {
+        CommandPool::destroy(ctx, ctx->cmdPool);
         DescriptorPool::destroy(ctx, ctx->descriptorPool);
         Device::destroy(ctx->device);
         WindowSurface::destroy(ctx);

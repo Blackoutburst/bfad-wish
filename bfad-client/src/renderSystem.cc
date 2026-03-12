@@ -31,6 +31,39 @@ namespace RenderSystem {
         free(renderSystem);
     }
 
+    U0 submit(Context::It* ctx, RenderSystem::It* renderSystem, VkCommandBuffer cmdBuffer, VkFence fence) {
+        VkPipelineStageFlags waitStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+
+        VkSubmitInfo submitInfo;
+        submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+        submitInfo.pNext = NULL;
+        submitInfo.waitSemaphoreCount = 1;
+        submitInfo.pWaitSemaphores = &renderSystem->imageView->pSemaphore[renderSystem->imageView->currentFrame];
+        submitInfo.pWaitDstStageMask = &waitStage;
+        submitInfo.commandBufferCount = 1;
+        submitInfo.pCommandBuffers = &cmdBuffer;
+        submitInfo.signalSemaphoreCount = 1;
+        submitInfo.pSignalSemaphores = &renderSystem->imageView->rSemaphore[renderSystem->imageView->currentFrame];
+
+        vkQueueSubmit(ctx->device->graphicQueue, 1, &submitInfo, fence);
+    }
+
+    U0 present(Context::It* ctx, RenderSystem::It* renderSystem) {
+        VkPresentInfoKHR presentInfo;
+        presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+        presentInfo.pNext = NULL;
+        presentInfo.waitSemaphoreCount = 1;
+        presentInfo.pWaitSemaphores = &renderSystem->imageView->rSemaphore[renderSystem->imageView->currentFrame];
+        presentInfo.swapchainCount = 1;
+        presentInfo.pSwapchains = &renderSystem->swapchain;
+        presentInfo.pImageIndices = &renderSystem->imageView->imageIndex;
+        presentInfo.pResults = NULL;
+
+        vkQueuePresentKHR(ctx->device->presentQueue, &presentInfo);
+
+        renderSystem->imageView->currentFrame = (renderSystem->imageView->currentFrame + 1) % renderSystem->imageView->swapChainImagesCount;
+    }
+
     U0 update(Context::It* ctx, RenderSystem::It* renderSystem) {
         vkDeviceWaitIdle(ctx->device->logical);
 

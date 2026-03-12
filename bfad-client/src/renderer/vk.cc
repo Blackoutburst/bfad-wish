@@ -18,21 +18,19 @@
 #include "renderer/renderPass.hh"
 #include "devices/physicalDevice.hh"
 #include "devices/logicalDevice.hh"
-#include "devices/commandPool.hh"
 #include "devices/commandBuffer.hh"
 #include "utils/semaphore.hh"
 #include "utils/fence.hh"
 #include "utils/buffer.hh"
 #include "utils/uniformBuffer.hh"
+#include "renderer/vertexArray.hh"
 #include "math/matrix.hh"
 #include "math/math.hh"
 
 static Context::It* ctx;
 static RenderSystem::It* renderSystem;
 static ShaderProgram::It* shaderProgram;
-static VkPipelineLayout pipelineLayout;
-static VkPipeline pipeline;
-static VkCommandPool cmdPool;
+static VertexArray::It* vao;
 static VkCommandBuffer cmdBuffer;
 static VkFence drawFence;
 static Buffer::It* vertexBuffer;
@@ -49,31 +47,20 @@ U0 vkDrawTriangle(U0) {
     VkResult swapchainStatus = vkAcquireNextImageKHR(ctx->device->logical, renderSystem->swapchain, UINT64_MAX, renderSystem->imageView->pSemaphore[renderSystem->imageView->currentFrame], VK_NULL_HANDLE, &renderSystem->imageView->imageIndex);
     if (swapchainStatus == VK_ERROR_OUT_OF_DATE_KHR || swapchainStatus == VK_SUBOPTIMAL_KHR) {
         RenderSystem::update(ctx, renderSystem);
+        VkExtent2D ext = Swapchain::extend(ctx);
+        Matrix::projection(projection, ext.width, ext.height, 90, 0.1, 1000);
         return;
     }
 
     Fence::reset(ctx, drawFence);
 
-    vkResetCommandBuffer(cmdBuffer, 0);
     CommandBuffer::begin(cmdBuffer);
-    RenderPass::begin(ctx, renderSystem->renderPass, renderSystem->framebuffers, cmdBuffer, renderSystem->imageView->imageIndex);
-    vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
-
-    VkExtent2D extends = Swapchain::extend(ctx);
     
-    VkViewport viewport;
-    viewport.x = 0.0f;
-    viewport.y = 0.0f;
-    viewport.width = (F32)extends.width;
-    viewport.height = (F32)extends.height;
-    viewport.minDepth = 0.0f;
-    viewport.maxDepth = 1.0f;
-    vkCmdSetViewport(cmdBuffer, 0, 1, &viewport);
+    RenderPass::begin(ctx, renderSystem->renderPass, renderSystem->framebuffers, cmdBuffer, renderSystem->imageView->imageIndex);
+    
+    VertexArray::bind(vao, cmdBuffer);
 
-    VkRect2D scissor;
-    scissor.offset = {0, 0};
-    scissor.extent = extends;
-    vkCmdSetScissor(cmdBuffer, 0, 1, &scissor);
+    Swapchain::setViewport(ctx, cmdBuffer);
 
     VkBuffer vertexBuffers[] = { vertexBuffer->handle };
     VkDeviceSize offsets[] = { 0 };
@@ -81,14 +68,10 @@ U0 vkDrawTriangle(U0) {
     vkCmdBindVertexBuffers(cmdBuffer, 0, 1, vertexBuffers, offsets);
     vkCmdBindIndexBuffer(cmdBuffer, indexBuffer->handle, 0, VK_INDEX_TYPE_UINT32);
 
-    UniformBuffer::bind(uniformBuffer, cmdBuffer, pipelineLayout);
-
     vkCmdDrawIndexed(cmdBuffer, 36, 1, 0, 0, 0);
 
     RenderPass::end(cmdBuffer);
     CommandBuffer::end(cmdBuffer);
-
-    VkPipelineStageFlags waitStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 
     F32 uniformData[48] = {
         // Model
@@ -112,32 +95,8 @@ U0 vkDrawTriangle(U0) {
 
     UniformBuffer::update(uniformBuffer, uniformData, 192);
 
-    VkSubmitInfo submitInfo;
-    submitInfo.pNext = NULL;
-    submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-    submitInfo.waitSemaphoreCount = 1;
-    submitInfo.pWaitSemaphores = &renderSystem->imageView->pSemaphore[renderSystem->imageView->currentFrame];
-    submitInfo.pWaitDstStageMask = &waitStage;
-    submitInfo.commandBufferCount = 1;
-    submitInfo.pCommandBuffers = &cmdBuffer;
-    submitInfo.signalSemaphoreCount = 1;
-    submitInfo.pSignalSemaphores = &renderSystem->imageView->rSemaphore[renderSystem->imageView->currentFrame];
-
-    vkQueueSubmit(ctx->device->graphicQueue, 1, &submitInfo, drawFence);
-
-    VkPresentInfoKHR presentInfo;
-    presentInfo.pNext = NULL;
-    presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-    presentInfo.waitSemaphoreCount = 1;
-    presentInfo.pWaitSemaphores = &renderSystem->imageView->rSemaphore[renderSystem->imageView->currentFrame];
-    presentInfo.swapchainCount = 1;
-    presentInfo.pSwapchains = &renderSystem->swapchain;
-    presentInfo.pImageIndices = &renderSystem->imageView->imageIndex;
-    presentInfo.pResults = NULL; 
-
-    vkQueuePresentKHR(ctx->device->presentQueue, &presentInfo);
-
-    renderSystem->imageView->currentFrame = (renderSystem->imageView->currentFrame + 1) % renderSystem->imageView->swapChainImagesCount;
+    RenderSystem::submit(ctx, renderSystem, cmdBuffer, drawFence);
+    RenderSystem::present(ctx, renderSystem);
 }
 
 U0 vkInit(GLFWwindow* window) {
@@ -147,12 +106,15 @@ U0 vkInit(GLFWwindow* window) {
     shaderProgram = ShaderProgram::create(ctx, "./shader/triangleVert.spv", "./shader/triangleFrag.spv");
 
     uniformBuffer = UniformBuffer::create(ctx, 0, 192);
+
+    VertexArray::Attribute attrs[2] = {
+        { 0, VK_FORMAT_R32G32B32_SFLOAT, 0  },
+        { 1, VK_FORMAT_R32G32B32_SFLOAT, 12 },
+    };
+    VertexArray::Description desc = { 24, attrs, 2 };
+    vao = VertexArray::create(ctx, &desc, uniformBuffer, shaderProgram, renderSystem->renderPass);
     
-    pipelineLayout = Pipeline::Layout::create(ctx, 1, uniformBuffer->setLayout);
-    pipeline = Pipeline::create(ctx, pipelineLayout, shaderProgram, renderSystem->renderPass);
-    
-    cmdPool = CommandPool::create(ctx);
-    cmdBuffer = CommandBuffer::create(ctx, cmdPool);
+    cmdBuffer = CommandBuffer::create(ctx);
 
     drawFence = Fence::create(ctx);
 
@@ -240,13 +202,10 @@ U0 vkClean(U0) {
 
     Fence::destroy(ctx, drawFence);
 
-    CommandBuffer::destroy(ctx, cmdBuffer, cmdPool);
-    CommandPool::destroy(ctx, cmdPool);
+    CommandBuffer::destroy(ctx, cmdBuffer);
     
     ShaderProgram::destroy(ctx, shaderProgram);
-    
-    Pipeline::Layout::destroy(ctx, pipelineLayout);
-    Pipeline::destroy(ctx, pipeline);
+    VertexArray::destroy(ctx, vao);
     
     RenderSystem::destroy(ctx, renderSystem);
     Context::destroy(ctx);

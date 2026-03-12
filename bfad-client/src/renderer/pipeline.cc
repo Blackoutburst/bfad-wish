@@ -18,37 +18,6 @@ namespace Pipeline {
         return createInfo;
     }
 
-    VkPipelineVertexInputStateCreateInfo createVertexInput(U0) {
-        // TODO: Remove static create clean pipeline system
-        static VkVertexInputBindingDescription bindingDesc;
-        bindingDesc.binding = 0;
-        bindingDesc.stride = 24;
-        bindingDesc.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-
-        static VkVertexInputAttributeDescription attrDescs[2];
-
-        attrDescs[0].location = 0;
-        attrDescs[0].binding = 0;
-        attrDescs[0].format = VK_FORMAT_R32G32B32_SFLOAT;
-        attrDescs[0].offset = 0;
-
-        attrDescs[1].location = 1;
-        attrDescs[1].binding = 0;
-        attrDescs[1].format = VK_FORMAT_R32G32B32_SFLOAT;
-        attrDescs[1].offset = 12;
-
-        VkPipelineVertexInputStateCreateInfo createInfo;
-        createInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-        createInfo.pNext = NULL;
-        createInfo.flags = 0;
-        createInfo.vertexBindingDescriptionCount = 1;
-        createInfo.pVertexBindingDescriptions = &bindingDesc;
-        createInfo.vertexAttributeDescriptionCount = 2;
-        createInfo.pVertexAttributeDescriptions = attrDescs;
-
-        return createInfo;
-    }
-
     VkPipelineInputAssemblyStateCreateInfo createInputAssembly(U0) {
         VkPipelineInputAssemblyStateCreateInfo createInfo;
         createInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
@@ -182,8 +151,7 @@ namespace Pipeline {
         vkDestroyPipeline(ctx->device->logical, graphicsPipeline, NULL);
     }
 
-    VkPipeline create(Context::It* ctx, VkPipelineLayout layout, ShaderProgram::It* shaderProgram, VkRenderPass renderPass) {
-        VkPipelineVertexInputStateCreateInfo vertexInput = createVertexInput();
+    VkPipeline create(Context::It* ctx, VkPipelineLayout layout, ShaderProgram::It* shaderProgram, VkRenderPass renderPass, VkPipelineVertexInputStateCreateInfo* vertexInput) {
         VkPipelineInputAssemblyStateCreateInfo inputAssembly = createInputAssembly();
         VkViewport viewPort = createViewport(ctx);
         VkRect2D scissor = createScissor(ctx);
@@ -201,7 +169,7 @@ namespace Pipeline {
         createInfo.pNext = NULL;
         createInfo.stageCount = 2;
         createInfo.pStages = shaderProgram->handle;
-        createInfo.pVertexInputState = &vertexInput;
+        createInfo.pVertexInputState = vertexInput;
         createInfo.pInputAssemblyState = &inputAssembly;
         createInfo.pTessellationState = NULL;
         createInfo.pViewportState = &viewport;
