@@ -89,6 +89,7 @@ namespace RenderPass {
 
         VkRenderPass renderPass;
         vkCreateRenderPass(ctx->device->logical, &renderPassInfo, NULL, &renderPass);
+        
         return renderPass;
     }
 }
