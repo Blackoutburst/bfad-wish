@@ -21,6 +21,7 @@ namespace Pipeline {
     VkPipelineColorBlendStateCreateInfo createColorBlendState(VkPipelineColorBlendAttachmentState* colorBlendAttachment);
     U0 destroy(Context::It* ctx, VkPipeline graphicsPipeline);
     VkPipeline create(Context::It* ctx, VkPipelineLayout layout, ShaderProgram::It* shaderProgram, VkRenderPass renderPass);
+    VkPipelineDepthStencilStateCreateInfo createDepthStencil(U0);
 
     namespace Layout {
         U0 remove(Context::It* ctx, VkPipelineLayout layout);

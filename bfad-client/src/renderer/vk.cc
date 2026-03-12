@@ -25,6 +25,7 @@
 #include "utils/buffer.hh"
 #include "utils/uniformBuffer.hh"
 #include "math/matrix.hh"
+#include "math/math.hh"
 
 static Context::It* ctx;
 static RenderSystem::It* renderSystem;
@@ -82,7 +83,7 @@ U0 vkDrawTriangle(U0) {
 
     UniformBuffer::bind(uniformBuffer, cmdBuffer, pipelineLayout);
 
-    vkCmdDrawIndexed(cmdBuffer, 6, 1, 0, 0, 0);
+    vkCmdDrawIndexed(cmdBuffer, 36, 1, 0, 0, 0);
 
     RenderPass::end(cmdBuffer);
     CommandBuffer::end(cmdBuffer);
@@ -132,6 +133,7 @@ U0 vkDrawTriangle(U0) {
     presentInfo.swapchainCount = 1;
     presentInfo.pSwapchains = &renderSystem->swapchain;
     presentInfo.pImageIndices = &renderSystem->imageView->imageIndex;
+    presentInfo.pResults = NULL; 
 
     vkQueuePresentKHR(ctx->device->presentQueue, &presentInfo);
 
@@ -154,23 +156,64 @@ U0 vkInit(GLFWwindow* window) {
 
     drawFence = Fence::create(ctx);
 
-    F32 vertexData[30] = {
-        -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
-        0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-        0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
-        -0.5f, 0.5f, 1.0f, 1.0f, 1.0f,
+    F32 vertexData[144] = {
+        // Front
+        -0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f,
+
+        // Back
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 0.0f,
+
+        // Left
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 0.0f, 1.0f,
+
+        // Right
+         0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 0.0f,
+
+        // Top
+        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 1.0f,
+
+        // Bottom
+        -0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 1.0f,
     };
 
-    U32 indexData[6] = {
-        0, 1, 2, 
-        2, 3, 0,
+    U32 indexData[36] = {
+        // Front
+        0,  1,  2,   2,  3,  0,
+        // Back
+        5,  4,  7,   7,  6,  5,
+        // Left
+        9,  8,  11,  11, 10, 9,
+        // Right
+        12, 13, 14,  14, 15, 12,
+        // Top
+        16, 17, 18,  18, 19, 16,
+        // Bottom
+        22, 23, 20,  20, 21, 22,
     };
 
-    vertexBuffer = Buffer::create(ctx, sizeof(vertexData[0]) * 30, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
-    Buffer::upload(ctx, vertexBuffer, vertexData, sizeof(vertexData[0]) * 30);
+    vertexBuffer = Buffer::create(ctx, sizeof(vertexData[0]) * 144, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
+    Buffer::upload(ctx, vertexBuffer, vertexData, sizeof(vertexData[0]) * 144);
 
-    indexBuffer = Buffer::create(ctx, sizeof(indexData[0]) * 6, VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
-    Buffer::upload(ctx, indexBuffer, indexData, sizeof(indexData[0]) * 6);
+    indexBuffer = Buffer::create(ctx, sizeof(indexData[0]) * 36, VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
+    Buffer::upload(ctx, indexBuffer, indexData, sizeof(indexData[0]) * 36);
 
 
     model = Matrix::create();
@@ -178,6 +221,9 @@ U0 vkInit(GLFWwindow* window) {
     projection = Matrix::create();
     Matrix::projection(projection, 1280, 720, 90, 0.1, 1000);
     Matrix::translate3d(view, 0.0f, 0.0f, -2.0f);
+    Matrix::rotate(model, rad(45), 1.0f, 0.0f, 0.0f);
+    Matrix::rotate(model, rad(45), 0.0f, 1.0f, 0.0f);
+    Matrix::rotate(model, rad(45), 0.0f, 0.0f, 1.0f);
 }
 
 U0 vkClean(U0) {

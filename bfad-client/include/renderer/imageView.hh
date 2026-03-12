@@ -14,9 +14,13 @@ namespace ImageView {
         U32 swapChainImagesCount;
         VkSemaphore* pSemaphore;
         VkSemaphore* rSemaphore;
+        VkImage depthImage;
+        VkDeviceMemory depthImageMemory;
+        VkImageView depthImageView;
     };
 
     U0 destroy(Context::It* ctx, ImageView::It* imageView);
     ImageView::It* create(Context::It* ctx, VkSwapchainKHR swapchain);
+    U0 createDepthImage(Context::It* ctx, ImageView::It* imageView);
 }
 

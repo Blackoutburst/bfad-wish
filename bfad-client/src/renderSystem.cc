@@ -10,7 +10,7 @@ namespace RenderSystem {
         VkSwapchainKHR swapchain = Swapchain::create(ctx);
         ImageView::It* imageView = ImageView::create(ctx, swapchain);
         VkRenderPass renderPass = RenderPass::create(ctx);
-        VkFramebuffer* framebuffers = Framebuffer::create(ctx, swapchain, renderPass, imageView->handle);
+        VkFramebuffer* framebuffers = Framebuffer::create(ctx, swapchain, renderPass, imageView);
     
         RenderSystem::It* renderSystem = (RenderSystem::It*)malloc(sizeof(RenderSystem::It));
 
@@ -40,7 +40,7 @@ namespace RenderSystem {
 
         VkSwapchainKHR swapchain = Swapchain::create(ctx);
         ImageView::It* imageView = ImageView::create(ctx, swapchain);
-        VkFramebuffer* framebuffers = Framebuffer::create(ctx, swapchain, renderSystem->renderPass, imageView->handle);
+        VkFramebuffer* framebuffers = Framebuffer::create(ctx, swapchain, renderSystem->renderPass, imageView);
 
         renderSystem->swapchain = swapchain;
         renderSystem->imageView = imageView;

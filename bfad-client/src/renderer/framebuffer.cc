@@ -12,20 +12,20 @@ namespace Framebuffer {
         }
     }
 
-    VkFramebuffer* create(Context::It* ctx, VkSwapchainKHR swapchain, VkRenderPass renderPass, VkImageView* imageView) {
+    VkFramebuffer* create(Context::It* ctx, VkSwapchainKHR swapchain, VkRenderPass renderPass, ImageView::It* imageView) {
         U32 imageCount = Swapchain::getImagesCount(ctx, swapchain);
         VkFramebuffer* framebuffers = (VkFramebuffer*)malloc(sizeof(VkFramebuffer) * imageCount);
         VkExtent2D extends = Swapchain::extend(ctx);
 
         for (U32 i = 0; i < imageCount; i++) {
-            VkImageView attachments[1] = { imageView[i] };
+            VkImageView attachments[2] = { imageView->handle[i], imageView->depthImageView };
 
             VkFramebufferCreateInfo createInfo;
             createInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
             createInfo.pNext = NULL;
             createInfo.flags = 0;
             createInfo.renderPass = renderPass;
-            createInfo.attachmentCount = 1;
+            createInfo.attachmentCount = 2;
             createInfo.pAttachments = attachments;
             createInfo.width = extends.width;
             createInfo.height = extends.height;

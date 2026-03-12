@@ -5,8 +5,9 @@
 
 #include "types.hh"
 #include "context.hh"
+#include "renderer/imageView.hh"
 
 namespace Framebuffer {
     U0 destroy(Context::It* ctx, VkSwapchainKHR swapchain, VkFramebuffer* framebuffer);
-    VkFramebuffer* create(Context::It* ctx, VkSwapchainKHR swapchain, VkRenderPass renderPass, VkImageView* imageView);
+    VkFramebuffer* create(Context::It* ctx, VkSwapchainKHR swapchain, VkRenderPass renderPass, ImageView::It* imageView);
 }

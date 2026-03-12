@@ -22,20 +22,20 @@ namespace Pipeline {
         // TODO: Remove static create clean pipeline system
         static VkVertexInputBindingDescription bindingDesc;
         bindingDesc.binding = 0;
-        bindingDesc.stride = 20;
+        bindingDesc.stride = 24;
         bindingDesc.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 
         static VkVertexInputAttributeDescription attrDescs[2];
 
         attrDescs[0].location = 0;
         attrDescs[0].binding = 0;
-        attrDescs[0].format = VK_FORMAT_R32G32_SFLOAT;
+        attrDescs[0].format = VK_FORMAT_R32G32B32_SFLOAT;
         attrDescs[0].offset = 0;
 
         attrDescs[1].location = 1;
         attrDescs[1].binding = 0;
         attrDescs[1].format = VK_FORMAT_R32G32B32_SFLOAT;
-        attrDescs[1].offset = 8;
+        attrDescs[1].offset = 12;
 
         VkPipelineVertexInputStateCreateInfo createInfo;
         createInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
@@ -162,6 +162,22 @@ namespace Pipeline {
         return createInfo;
     }
 
+    VkPipelineDepthStencilStateCreateInfo createDepthStencil(U0) {
+        VkPipelineDepthStencilStateCreateInfo depthStencil;
+        depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+        depthStencil.pNext = NULL;
+        depthStencil.flags = 0;
+        depthStencil.depthTestEnable = VK_TRUE;
+        depthStencil.depthWriteEnable = VK_TRUE;
+        depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
+        depthStencil.depthBoundsTestEnable = VK_FALSE;
+        depthStencil.stencilTestEnable = VK_FALSE;
+        depthStencil.minDepthBounds = 0.0f;
+        depthStencil.maxDepthBounds = 1.0f;
+
+        return depthStencil;
+    }
+
     U0 destroy(Context::It* ctx, VkPipeline graphicsPipeline) {
         vkDestroyPipeline(ctx->device->logical, graphicsPipeline, NULL);
     }
@@ -177,6 +193,7 @@ namespace Pipeline {
         VkPipelineColorBlendAttachmentState colorBlendAttachmentState = createColorBlendAttachmentState();
         VkPipelineColorBlendStateCreateInfo colorBlend =  createColorBlendState(&colorBlendAttachmentState);
         VkPipelineDynamicStateCreateInfo dynamicState = createDynamicState();
+        VkPipelineDepthStencilStateCreateInfo depthStencil = createDepthStencil();
 
         VkGraphicsPipelineCreateInfo createInfo;
         createInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
@@ -190,7 +207,7 @@ namespace Pipeline {
         createInfo.pViewportState = &viewport;
         createInfo.pRasterizationState = &rasterizer;
         createInfo.pMultisampleState = &multiSampling;
-        createInfo.pDepthStencilState = NULL;
+        createInfo.pDepthStencilState = &depthStencil;
         createInfo.pColorBlendState = &colorBlend;
         createInfo.pDynamicState = &dynamicState;
         createInfo.layout = layout;

@@ -7,9 +7,11 @@ namespace RenderPass {
     }
 
     U0 begin(Context::It* ctx, VkRenderPass renderPass, VkFramebuffer* framebuffers, VkCommandBuffer cmdBuffer, U32 imageIndex) {
-        VkClearValue clearColor = {{{0.0f, 0.0f, 0.0f, 1.0f}}};
-        VkExtent2D extends = Swapchain::extend(ctx);
+        VkClearValue clearValues[2];
+        clearValues[0].color = {{0.0f, 0.0f, 0.0f, 1.0f}};
+        clearValues[1].depthStencil = {1.0f, 0};
 
+        VkExtent2D extends = Swapchain::extend(ctx);
         VkRenderPassBeginInfo createInfo;
         createInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
         createInfo.pNext = NULL;
@@ -17,8 +19,8 @@ namespace RenderPass {
         createInfo.framebuffer = framebuffers[imageIndex];
         createInfo.renderArea.offset = {0, 0};
         createInfo.renderArea.extent = extends;
-        createInfo.clearValueCount = 1;
-        createInfo.pClearValues = &clearColor;
+        createInfo.clearValueCount = 2;
+        createInfo.pClearValues = clearValues;
 
         vkCmdBeginRenderPass(cmdBuffer, &createInfo, VK_SUBPASS_CONTENTS_INLINE);
     }
@@ -30,11 +32,10 @@ namespace RenderPass {
 
     VkRenderPass create(Context::It* ctx) {
         VkSurfaceFormatKHR surfaceFormat = Swapchain::getFormat(ctx);
-        VkFormat format = surfaceFormat.format;
 
         VkAttachmentDescription colorAttachment;
         colorAttachment.flags = 0;
-        colorAttachment.format = format;
+        colorAttachment.format = surfaceFormat.format;
         colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
         colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
         colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
@@ -43,9 +44,24 @@ namespace RenderPass {
         colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
         colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
+        VkAttachmentDescription depthAttachment;
+        depthAttachment.flags = 0;
+        depthAttachment.format = VK_FORMAT_D32_SFLOAT;
+        depthAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
+        depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+        depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+        depthAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+        depthAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+        depthAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+        depthAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
         VkAttachmentReference colorAttachmentRef;
         colorAttachmentRef.attachment = 0;
         colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+        VkAttachmentReference depthAttachmentRef;
+        depthAttachmentRef.attachment = 1;
+        depthAttachmentRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
         VkSubpassDescription subpass;
         subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
@@ -54,24 +70,25 @@ namespace RenderPass {
         subpass.colorAttachmentCount = 1;
         subpass.pColorAttachments = &colorAttachmentRef;
         subpass.pResolveAttachments = NULL;
-        subpass.pDepthStencilAttachment = NULL;
+        subpass.pDepthStencilAttachment = &depthAttachmentRef;
         subpass.preserveAttachmentCount = 0;
         subpass.pPreserveAttachments = NULL;
 
-        VkRenderPass renderPass;
+        VkAttachmentDescription attachments[2] = { colorAttachment, depthAttachment };
+
         VkRenderPassCreateInfo renderPassInfo;
         renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
         renderPassInfo.flags = 0;
         renderPassInfo.pNext = NULL;
-        renderPassInfo.attachmentCount = 1;
-        renderPassInfo.pAttachments = &colorAttachment;
+        renderPassInfo.attachmentCount = 2;
+        renderPassInfo.pAttachments = attachments;
         renderPassInfo.subpassCount = 1;
         renderPassInfo.pSubpasses = &subpass;
         renderPassInfo.dependencyCount = 0;
         renderPassInfo.pDependencies = NULL;
-        
-        vkCreateRenderPass(ctx->device->logical, &renderPassInfo, NULL, &renderPass);
 
+        VkRenderPass renderPass;
+        vkCreateRenderPass(ctx->device->logical, &renderPassInfo, NULL, &renderPass);
         return renderPass;
     }
 }
