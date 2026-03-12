@@ -6,8 +6,9 @@
 #include "types.hh"
 #include "context.hh"
 
+#include "renderer/shaderProgram.hh"
+
 namespace Pipeline {
-    VkPipelineShaderStageCreateInfo createShader(VkShaderStageFlagBits stage, VkShaderModule shader);
     VkPipelineDynamicStateCreateInfo createDynamicState(U0);
     VkPipelineVertexInputStateCreateInfo createVertexInput(U0);
     VkPipelineInputAssemblyStateCreateInfo createInputAssembly(U0);
@@ -19,7 +20,7 @@ namespace Pipeline {
     VkPipelineColorBlendAttachmentState createColorBlendAttachmentState(U0);
     VkPipelineColorBlendStateCreateInfo createColorBlendState(VkPipelineColorBlendAttachmentState* colorBlendAttachment);
     U0 destroy(Context::It* ctx, VkPipeline graphicsPipeline);
-    VkPipeline create(Context::It* ctx, VkPipelineLayout layout, VkShaderModule vertexShader, VkShaderModule fragmentShader, VkRenderPass renderPass);
+    VkPipeline create(Context::It* ctx, VkPipelineLayout layout, ShaderProgram::It* shaderProgram, VkRenderPass renderPass);
 
     namespace Layout {
         U0 remove(Context::It* ctx, VkPipelineLayout layout);

@@ -26,9 +26,7 @@
 
 static Context::It* ctx;
 static RenderSystem::It* renderSystem;
-
-static VkShaderModule vertexShader;
-static VkShaderModule fragmentShader;
+static ShaderProgram::It* shaderProgram;
 static VkPipelineLayout pipelineLayout;
 static VkPipeline pipeline;
 static VkCommandPool cmdPool;
@@ -114,11 +112,10 @@ U0 vkInit(GLFWwindow* window) {
     ctx = Context::create(window);
     renderSystem = RenderSystem::create(ctx);
 
-    vertexShader = Shader::create(ctx, "./shader/triangleVert.spv");
-    fragmentShader = Shader::create(ctx, "./shader/triangleFrag.spv");
+    shaderProgram = ShaderProgram::create(ctx, "./shader/triangleVert.spv", "./shader/triangleFrag.spv");
     
     pipelineLayout = Pipeline::Layout::create(ctx);
-    pipeline = Pipeline::create(ctx, pipelineLayout, vertexShader, fragmentShader, renderSystem->renderPass);
+    pipeline = Pipeline::create(ctx, pipelineLayout, shaderProgram, renderSystem->renderPass);
     
     cmdPool = CommandPool::create(ctx);
     cmdBuffer = CommandBuffer::create(ctx, cmdPool);
@@ -155,8 +152,7 @@ U0 vkClean(U0) {
     CommandBuffer::destroy(ctx, cmdBuffer, cmdPool);
     CommandPool::destroy(ctx, cmdPool);
     
-    Shader::destroy(ctx, vertexShader);
-    Shader::destroy(ctx, fragmentShader);
+    ShaderProgram::destroy(ctx, shaderProgram);
     
     Pipeline::Layout::destroy(ctx, pipelineLayout);
     Pipeline::destroy(ctx, pipeline);

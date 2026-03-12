@@ -7,19 +7,6 @@ static VkDynamicState dynamicStates[2] = {
 }; 
 
 namespace Pipeline {
-    VkPipelineShaderStageCreateInfo createShader(VkShaderStageFlagBits stage, VkShaderModule shader) {
-        VkPipelineShaderStageCreateInfo createInfo;
-        createInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-        createInfo.pNext = NULL;
-        createInfo.flags = 0;
-        createInfo.stage = stage;
-        createInfo.module = shader;
-        createInfo.pName = "main";
-        createInfo.pSpecializationInfo = NULL;
-
-        return createInfo;
-    }
-
     VkPipelineDynamicStateCreateInfo createDynamicState(U0) {
         VkPipelineDynamicStateCreateInfo createInfo;
         createInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
@@ -179,12 +166,10 @@ namespace Pipeline {
         vkDestroyPipeline(ctx->device->logical, graphicsPipeline, NULL);
     }
 
-    VkPipeline create(Context::It* ctx, VkPipelineLayout layout, VkShaderModule vertexShader, VkShaderModule fragmentShader, VkRenderPass renderPass) {
+    VkPipeline create(Context::It* ctx, VkPipelineLayout layout, ShaderProgram::It* shaderProgram, VkRenderPass renderPass) {
         UNUSED_VAR(layout);
         
-        VkPipelineShaderStageCreateInfo vertexInfo = createShader(VK_SHADER_STAGE_VERTEX_BIT, vertexShader);
-        VkPipelineShaderStageCreateInfo fragmentInfo = createShader(VK_SHADER_STAGE_FRAGMENT_BIT, fragmentShader);
-        VkPipelineShaderStageCreateInfo shaderInfo[2] = {vertexInfo, fragmentInfo};
+        
 
         VkPipelineVertexInputStateCreateInfo vertexInput = createVertexInput();
         VkPipelineInputAssemblyStateCreateInfo inputAssembly = createInputAssembly();
@@ -202,7 +187,7 @@ namespace Pipeline {
         createInfo.flags = 0;
         createInfo.pNext = NULL;
         createInfo.stageCount = 2;
-        createInfo.pStages = shaderInfo;
+        createInfo.pStages = shaderProgram->handle;
         createInfo.pVertexInputState = &vertexInput;
         createInfo.pInputAssemblyState = &inputAssembly;
         createInfo.pTessellationState = NULL;
