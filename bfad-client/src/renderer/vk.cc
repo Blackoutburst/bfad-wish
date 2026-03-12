@@ -58,7 +58,7 @@ U0 vkDrawTriangle(U0) {
     Fence::wait(ctx, drawFence);
 
     VkResult acquireResult = vkAcquireNextImageKHR(ctx->device->logical, renderSystem->swapchain, UINT64_MAX, renderSystem->imageView->pSemaphore[renderSystem->imageView->currentFrame], VK_NULL_HANDLE, &renderSystem->imageView->imageIndex);
-    
+
     if (acquireResult == VK_ERROR_OUT_OF_DATE_KHR) {
         RenderSystem::update(ctx, renderSystem);
         VkExtent2D ext = Swapchain::extend(ctx);
