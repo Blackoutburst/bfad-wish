@@ -1,6 +1,13 @@
 #pragma once
 
 #include "types.hh"
+#include "context.hh"
+#include "renderSystem.hh"
+
+#include "math/matrix.hh"
+#include "renderer/shaderProgram.hh"
+#include "renderer/vertexArray.hh"
+#include "utils/uniformBuffer.hh"
 
 namespace Cube {
     static U32 vertexCount = 144;
@@ -58,4 +65,17 @@ namespace Cube {
         // Bottom
         22, 23, 20,  20, 21, 22,
     };
+
+    struct It {
+        Matrix::It* model;
+        ShaderProgram::It* shaderProgram;
+        Buffer::It* vertexBuffer;
+        Buffer::It* indexBuffer;
+        UniformBuffer::It* uniformBuffer;
+        VertexArray::It* vao;
+    };
+
+    Cube::It* create(Context::It* ctx, RenderSystem::It* renderSystem);
+    U0 render(Cube::It* cube, VkCommandBuffer cmdBuffer);
+    U0 destroy(Context::It* ctx, Cube::It* cube);
 }
