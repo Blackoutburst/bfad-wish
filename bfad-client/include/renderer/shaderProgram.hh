@@ -7,7 +7,7 @@
 
 namespace ShaderProgram {
     struct It {
-        VkPipelineShaderStageCreateInfo* handle;
+        VkPipelineShaderStageCreateInfo handle[2];
         VkShaderModule vertexShader;
         VkShaderModule fragmentShader;
     };

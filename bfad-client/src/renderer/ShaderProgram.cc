@@ -24,10 +24,10 @@ namespace ShaderProgram {
 
         VkPipelineShaderStageCreateInfo vertexInfo = createShaderInfo(VK_SHADER_STAGE_VERTEX_BIT, vertexShader);
         VkPipelineShaderStageCreateInfo fragmentInfo = createShaderInfo(VK_SHADER_STAGE_FRAGMENT_BIT, fragmentShader);
-        VkPipelineShaderStageCreateInfo handle[2] = {vertexInfo, fragmentInfo};
 
         ShaderProgram::It* shaderProgram = (ShaderProgram::It*)malloc(sizeof(ShaderProgram::It));
-        shaderProgram->handle = handle;
+        shaderProgram->handle[0] = vertexInfo;
+        shaderProgram->handle[1] = fragmentInfo;
         shaderProgram->vertexShader = vertexShader;
         shaderProgram->fragmentShader = fragmentShader;
 

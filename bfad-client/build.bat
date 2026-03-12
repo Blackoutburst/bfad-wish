@@ -17,7 +17,7 @@ set F_DISABLED=
 
 rem CLANG
 echo CLANG:
-clang++ -o %NAME% %SRC% %INCLUDE% %VK% %GLFW% %F_ERROR% %F_DEBUG% %F_DISABLED%
+clang++ -o %NAME% %SRC% %INCLUDE% %VK% %GLFW% %F_ERROR%
 set CLANG_EXIT=%ERRORLEVEL%
 
 if %CLANG_EXIT% neq 0 (

@@ -8,6 +8,13 @@
 #include "renderer/imageView.hh"
 
 namespace Framebuffer {
-    U0 destroy(Context::It* ctx, VkSwapchainKHR swapchain, VkFramebuffer* framebuffer);
-    VkFramebuffer* create(Context::It* ctx, VkSwapchainKHR swapchain, VkRenderPass renderPass, ImageView::It* imageView);
+
+    struct It {
+        VkFramebuffer* handles;
+        VkExtent2D extends;
+        U32 bufferCount;
+    };
+
+    U0 destroy(Context::It* ctx, Framebuffer::It* framebuffers);
+    Framebuffer::It* create(Context::It* ctx, VkSwapchainKHR swapchain, VkRenderPass renderPass, ImageView::It* imageView);
 }

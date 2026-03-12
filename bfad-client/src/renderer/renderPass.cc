@@ -6,19 +6,18 @@ namespace RenderPass {
         vkCmdEndRenderPass(cmdBuffer);
     }
 
-    U0 begin(Context::It* ctx, VkRenderPass renderPass, VkFramebuffer* framebuffers, VkCommandBuffer cmdBuffer, U32 imageIndex) {
+    U0 begin(VkRenderPass renderPass, Framebuffer::It* framebuffers, VkCommandBuffer cmdBuffer, U32 imageIndex) {
         VkClearValue clearValues[2];
         clearValues[0].color = {{0.0f, 0.0f, 0.0f, 1.0f}};
         clearValues[1].depthStencil = {1.0f, 0};
 
-        VkExtent2D extends = Swapchain::extend(ctx);
         VkRenderPassBeginInfo createInfo;
         createInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
         createInfo.pNext = NULL;
         createInfo.renderPass = renderPass;
-        createInfo.framebuffer = framebuffers[imageIndex];
+        createInfo.framebuffer = framebuffers->handles[imageIndex];
         createInfo.renderArea.offset = {0, 0};
-        createInfo.renderArea.extent = extends;
+        createInfo.renderArea.extent = framebuffers->extends;
         createInfo.clearValueCount = 2;
         createInfo.pClearValues = clearValues;
 
@@ -64,6 +63,7 @@ namespace RenderPass {
         depthAttachmentRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
         VkSubpassDescription subpass;
+        subpass.flags = 0;
         subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
         subpass.inputAttachmentCount = 0;
         subpass.pInputAttachments = NULL;

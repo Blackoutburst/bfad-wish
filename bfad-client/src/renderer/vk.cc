@@ -57,8 +57,10 @@ Matrix::It* getProjection2dMatrix(U0) {
 U0 vkDrawTriangle(U0) {
     Fence::wait(ctx, drawFence);
 
-    VkResult swapchainStatus = vkAcquireNextImageKHR(ctx->device->logical, renderSystem->swapchain, UINT64_MAX, renderSystem->imageView->pSemaphore[renderSystem->imageView->currentFrame], VK_NULL_HANDLE, &renderSystem->imageView->imageIndex);
-    if (swapchainStatus == VK_ERROR_OUT_OF_DATE_KHR || swapchainStatus == VK_SUBOPTIMAL_KHR) {
+    VkResult acquireResult = vkAcquireNextImageKHR(ctx->device->logical, renderSystem->swapchain, UINT64_MAX, renderSystem->imageView->pSemaphore[renderSystem->imageView->currentFrame], VK_NULL_HANDLE, &renderSystem->imageView->imageIndex);
+    
+    if (acquireResult == VK_ERROR_OUT_OF_DATE_KHR) {
+        vkDeviceWaitIdle(ctx->device->logical);
         RenderSystem::update(ctx, renderSystem);
         VkExtent2D ext = Swapchain::extend(ctx);
         Matrix::projection(projection, ext.width, ext.height, 90, 0.1, 1000);
@@ -69,7 +71,7 @@ U0 vkDrawTriangle(U0) {
     Fence::reset(ctx, drawFence);
 
     CommandBuffer::begin(cmdBuffer);
-    RenderPass::begin(ctx, renderSystem->renderPass, renderSystem->framebuffers, cmdBuffer, renderSystem->imageView->imageIndex);
+    RenderPass::begin(renderSystem->renderPass, renderSystem->framebuffers, cmdBuffer, renderSystem->imageView->imageIndex);
 
     Swapchain::setViewport(ctx, cmdBuffer);
 
@@ -80,7 +82,16 @@ U0 vkDrawTriangle(U0) {
     CommandBuffer::end(cmdBuffer);
 
     RenderSystem::submit(ctx, renderSystem, cmdBuffer, drawFence);
-    RenderSystem::present(ctx, renderSystem);
+    VkResult presentResult = RenderSystem::present(ctx, renderSystem);
+
+    if (acquireResult == VK_SUBOPTIMAL_KHR || presentResult == VK_ERROR_OUT_OF_DATE_KHR || presentResult == VK_SUBOPTIMAL_KHR) {
+        vkDeviceWaitIdle(ctx->device->logical);
+        
+        RenderSystem::update(ctx, renderSystem);
+        VkExtent2D ext = Swapchain::extend(ctx);
+        Matrix::projection(projection, ext.width, ext.height, 90, 0.1, 1000);
+        Matrix::ortho2D(projection2d, 0.0f, ext.width, 0.0f, ext.height, -1.0f, 1.0f);
+    }
 }
 
 U0 vkInit(GLFWwindow* window) {

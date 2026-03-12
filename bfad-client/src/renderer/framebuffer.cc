@@ -1,18 +1,19 @@
 #include <stdlib.h>
+
 #include "renderer/framebuffer.hh"
 #include "renderer/swapchain.hh"
 #include "devices/devices.hh"
 
 namespace Framebuffer {
-    U0 destroy(Context::It* ctx, VkSwapchainKHR swapchain, VkFramebuffer* framebuffers) {
-        U32 bufferCount = Swapchain::getImagesCount(ctx, swapchain);
-
-        for (U32 i = 0; i < bufferCount; i++) {
-            vkDestroyFramebuffer(ctx->device->logical, framebuffers[i], NULL);
+    U0 destroy(Context::It* ctx, Framebuffer::It* framebuffers) {
+        for (U32 i = 0; i < framebuffers->bufferCount; i++) {
+            vkDestroyFramebuffer(ctx->device->logical, framebuffers->handles[i], NULL);
         }
     }
 
-    VkFramebuffer* create(Context::It* ctx, VkSwapchainKHR swapchain, VkRenderPass renderPass, ImageView::It* imageView) {
+    Framebuffer::It* create(Context::It* ctx, VkSwapchainKHR swapchain, VkRenderPass renderPass, ImageView::It* imageView) {
+        Framebuffer::It* parent = (Framebuffer::It*)malloc(sizeof(Framebuffer::It));
+        
         U32 imageCount = Swapchain::getImagesCount(ctx, swapchain);
         VkFramebuffer* framebuffers = (VkFramebuffer*)malloc(sizeof(VkFramebuffer) * imageCount);
         VkExtent2D extends = Swapchain::extend(ctx);
@@ -34,6 +35,10 @@ namespace Framebuffer {
             vkCreateFramebuffer(ctx->device->logical, &createInfo, NULL, &framebuffers[i]);
         }
 
-        return framebuffers;
+        parent->handles = framebuffers;
+        parent->extends = extends;
+        parent->bufferCount = imageCount;
+
+        return parent;
     }
 }

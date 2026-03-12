@@ -132,6 +132,15 @@ namespace Pipeline {
     }
 
     VkPipelineDepthStencilStateCreateInfo createDepthStencil(U0) {
+        VkStencilOpState stencilOp = {};
+        stencilOp.failOp = VK_STENCIL_OP_KEEP;
+        stencilOp.passOp = VK_STENCIL_OP_KEEP;
+        stencilOp.depthFailOp = VK_STENCIL_OP_KEEP;
+        stencilOp.compareOp = VK_COMPARE_OP_ALWAYS;
+        stencilOp.compareMask = 0;
+        stencilOp.writeMask = 0;
+        stencilOp.reference = 0;
+
         VkPipelineDepthStencilStateCreateInfo depthStencil;
         depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
         depthStencil.pNext = NULL;
@@ -141,6 +150,8 @@ namespace Pipeline {
         depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
         depthStencil.depthBoundsTestEnable = VK_FALSE;
         depthStencil.stencilTestEnable = VK_FALSE;
+        depthStencil.front = stencilOp;
+        depthStencil.back = stencilOp;
         depthStencil.minDepthBounds = 0.0f;
         depthStencil.maxDepthBounds = 1.0f;
 
