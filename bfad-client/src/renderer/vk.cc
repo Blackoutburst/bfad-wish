@@ -60,11 +60,11 @@ U0 vkDrawTriangle(U0) {
     VkResult acquireResult = vkAcquireNextImageKHR(ctx->device->logical, renderSystem->swapchain, UINT64_MAX, renderSystem->imageView->pSemaphore[renderSystem->imageView->currentFrame], VK_NULL_HANDLE, &renderSystem->imageView->imageIndex);
     
     if (acquireResult == VK_ERROR_OUT_OF_DATE_KHR) {
-        vkDeviceWaitIdle(ctx->device->logical);
         RenderSystem::update(ctx, renderSystem);
         VkExtent2D ext = Swapchain::extend(ctx);
         Matrix::projection(projection, ext.width, ext.height, 90, 0.1, 1000);
         Matrix::ortho2D(projection2d, 0.0f, ext.width, 0.0f, ext.height, -1.0f, 1.0f);
+
         return;
     }
 
@@ -85,8 +85,6 @@ U0 vkDrawTriangle(U0) {
     VkResult presentResult = RenderSystem::present(ctx, renderSystem);
 
     if (acquireResult == VK_SUBOPTIMAL_KHR || presentResult == VK_ERROR_OUT_OF_DATE_KHR || presentResult == VK_SUBOPTIMAL_KHR) {
-        vkDeviceWaitIdle(ctx->device->logical);
-        
         RenderSystem::update(ctx, renderSystem);
         VkExtent2D ext = Swapchain::extend(ctx);
         Matrix::projection(projection, ext.width, ext.height, 90, 0.1, 1000);

@@ -6,11 +6,11 @@
 #include "renderer/windowSurface.hh"
 #include "utils/logger.hh"
 
-#define REQUIRED_EXTENSIONS_COUNT 3
+#define REQUIRED_EXTENSIONS_COUNT 2
 static const I8* requiredExtensions[REQUIRED_EXTENSIONS_COUNT] = {
     VK_KHR_SWAPCHAIN_EXTENSION_NAME,
     "VK_NVX_multiview_per_view_attributes",
-    "VK_KHR_portability_subset",
+    //"VK_KHR_portability_subset",
 };
 
 namespace LogicalDevice {
