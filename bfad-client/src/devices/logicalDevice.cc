@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 
 #include "devices/logicalDevice.hh"
 #include "devices/queueFamilies.hh"
@@ -6,12 +7,32 @@
 #include "renderer/windowSurface.hh"
 #include "utils/logger.hh"
 
-#define REQUIRED_EXTENSIONS_COUNT 2
-static const I8* requiredExtensions[REQUIRED_EXTENSIONS_COUNT] = {
+#define WANTED_EXTENSIONS_COUNT 3
+static const I8* wantedExtensions[WANTED_EXTENSIONS_COUNT] = {
     VK_KHR_SWAPCHAIN_EXTENSION_NAME,
     "VK_NVX_multiview_per_view_attributes",
-    //"VK_KHR_portability_subset",
+    "VK_KHR_portability_subset",
 };
+
+static U32 querySupportedExtensions(VkPhysicalDevice physicalDevice, const I8** out) {
+    U32 availableCount = 0;
+    vkEnumerateDeviceExtensionProperties(physicalDevice, NULL, &availableCount, NULL);
+    VkExtensionProperties* available = (VkExtensionProperties*)malloc(sizeof(VkExtensionProperties) * availableCount);
+    vkEnumerateDeviceExtensionProperties(physicalDevice, NULL, &availableCount, available);
+
+    U32 count = 0;
+    for (U32 i = 0; i < WANTED_EXTENSIONS_COUNT; i++) {
+        for (U32 j = 0; j < availableCount; j++) {
+            if (strcmp(wantedExtensions[i], available[j].extensionName) == 0) {
+                out[count++] = wantedExtensions[i];
+                break;
+            }
+        }
+    }
+
+    free(available);
+    return count;
+}
 
 namespace LogicalDevice {
     U0 destroy(VkDevice device) {
@@ -84,8 +105,11 @@ namespace LogicalDevice {
         createInfo.pQueueCreateInfos = sameQueue ? &graphicsQueueCreateInfo : queues;
         createInfo.enabledLayerCount = 0;
         createInfo.ppEnabledLayerNames = NULL;
-        createInfo.enabledExtensionCount = REQUIRED_EXTENSIONS_COUNT;
-        createInfo.ppEnabledExtensionNames = requiredExtensions;
+        const I8* enabledExtensions[WANTED_EXTENSIONS_COUNT];
+        U32 enabledExtensionCount = querySupportedExtensions(physicalDevice, enabledExtensions);
+
+        createInfo.enabledExtensionCount = enabledExtensionCount;
+        createInfo.ppEnabledExtensionNames = enabledExtensions;
         createInfo.pEnabledFeatures = &deviceFeatures;
 
         vkCreateDevice(physicalDevice, &createInfo, NULL, &logicalDevice);

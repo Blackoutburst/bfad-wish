@@ -55,6 +55,8 @@ Matrix::It* getProjection2dMatrix(U0) {
 
 
 U0 vkDrawTriangle(U0) {
+    if (Window::isMinimized()) return;
+
     Fence::wait(ctx, drawFence);
 
     VkResult acquireResult = vkAcquireNextImageKHR(ctx->device->logical, renderSystem->swapchain, UINT64_MAX, renderSystem->imageView->pSemaphore[renderSystem->imageView->currentFrame], VK_NULL_HANDLE, &renderSystem->imageView->imageIndex);
