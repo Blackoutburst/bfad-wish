@@ -5,9 +5,9 @@
 #include <vulkan/vulkan.h>
 #include <stdio.h>
 
-#include "logger.hh"
-#include "types.hh"
+#include "engine/logger.h"
 
+#include "engine/types.hh"
 #include "engine/utils/args.hh"
 #include "engine/engine.hh"
 #include "engine/window/window.hh"

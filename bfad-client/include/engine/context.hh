@@ -3,7 +3,7 @@
 #include <GLFW/glfw3.h>
 #include <vulkan/vulkan.h>
 
-#include "types.hh"
+#include "engine/types.hh"
 #include "device/device.hh"
 
 namespace Context {

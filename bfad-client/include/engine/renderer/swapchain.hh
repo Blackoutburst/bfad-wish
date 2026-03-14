@@ -2,9 +2,8 @@
 
 #include <vulkan/vulkan.h>
 
-#include "types.hh"
+#include "engine/types.hh"
 #include "engine/context.hh"
-
 #include "engine/renderer/imageView.hh"
 
 namespace Swapchain {

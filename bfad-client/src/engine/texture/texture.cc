@@ -2,7 +2,7 @@
 
 #include <stdlib.h>
 
-#include "stb/stb_image.h"
+#include "engine/stb/stb_image.h"
 
 #include "engine/texture/texture.hh"
 #include "engine/texture/sampler.hh"

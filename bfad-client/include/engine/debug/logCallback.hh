@@ -2,7 +2,7 @@
 
 #include <vulkan/vulkan.h>
 
-#include "types.hh"
+#include "engine/types.hh"
 
 namespace LogCallback {
     U0 destroy(VkInstance instance, VkDebugUtilsMessengerEXT logger);

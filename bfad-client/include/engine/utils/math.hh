@@ -1,6 +1,6 @@
 #pragma once
 
-#include "types.hh"
+#include "engine/types.hh"
 
 U32 clamp(U32 d, U32 min, U32 max) {
   const U32 t = d < min ? min : d;

@@ -3,7 +3,7 @@
 #include <vulkan/vulkan.h>
 
 #include "engine/context.hh"
-#include "types.hh"
+#include "engine/types.hh"
 
 namespace DescriptorPool {
     VkDescriptorPool create(Context::It* ctx);

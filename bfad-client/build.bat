@@ -1,6 +1,7 @@
 @echo off
 set NAME=vulkan
-set SRC=src\*.cc src\engine\*.cc src\engine\renderer\*.cc src\engine\window\*.cc src\engine\utils\*.cc src\engine\debug\*.cc src\engine\device\*.cc src\engine\math\*.cc src\engine\texture\*.cc src\object\*.cc
+set ENGINE_SRC=src\engine\*.cc src\engine\renderer\*.cc src\engine\window\*.cc src\engine\utils\*.cc src\engine\debug\*.cc src\engine\device\*.cc src\engine\math\*.cc src\engine\texture\*.cc
+set SRC=src\*.cc src\object\*.cc
 set INCLUDE=-Iinclude
 
 set I_VK=C:\VulkanSDK\1.4.341.1\Include
@@ -17,7 +18,7 @@ set F_DISABLED=
 
 rem CLANG
 echo CLANG:
-clang++ -o %NAME% %SRC% %INCLUDE% %VK% %GLFW% %F_ERROR% %F_DEBUG% %F_DISABLED%
+clang++ -o %NAME% %ENGINE_SRC% %SRC% %INCLUDE% %VK% %GLFW% %F_ERROR% %F_DEBUG% %F_DISABLED%
 set CLANG_EXIT=%ERRORLEVEL%
 
 if %CLANG_EXIT% neq 0 (

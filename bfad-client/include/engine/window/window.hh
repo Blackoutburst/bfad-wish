@@ -3,7 +3,7 @@
 #include <GLFW/glfw3.h>
 #include <vulkan/vulkan.h>
 
-#include "types.hh"
+#include "engine/types.hh"
 
 namespace Window {
     U0 update();

@@ -2,7 +2,7 @@
 
 #include <vulkan/vulkan.h>
 
-#include "types.hh"
+#include "engine/types.hh"
 
 namespace LogicalDevice {
     VkQueue getQueue(VkPhysicalDevice physicalDevice, VkDevice logicalDevice, VkQueueFlagBits queueType);

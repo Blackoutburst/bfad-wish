@@ -1,6 +1,7 @@
 #!/bin/bash
 readonly NAME="vulkan"
-readonly SRC="src/*.cc src/engine/*.cc src/engine/renderer/*.cc src/engine/window/*.cc src/engine/utils/*.cc src/engine/debug/*.cc src/engine/device/*.cc src/engine/math/*.cc src/engine/texture/*.cc src/object/*.cc"
+readonly ENGINE_SRC="src/engine/*.cc src/engine/renderer/*.cc src/engine/window/*.cc src/engine/utils/*.cc src/engine/debug/*.cc src/engine/device/*.cc src/engine/math/*.cc src/engine/texture/*.cc"
+readonly SRC="src/*.cc src/object/*.cc"
 readonly INCLUDE="-Iinclude"
 
 readonly I_VK="/opt/homebrew/include"
@@ -19,7 +20,7 @@ readonly FRAMEWORKS="-framework Cocoa -framework IOKit"
 ### CLANG ###
 
 printf "\e[94mCLANG\e[0m: "
-clang++ -o $NAME $SRC $INCLUDE $VK $GLFW $F_ERROR $F_DEBUG $F_DISABLED $FRAMEWORKS
+clang++ -o $NAME $ENGINE_SRC $SRC $INCLUDE $VK $GLFW $F_ERROR $F_DEBUG $F_DISABLED $FRAMEWORKS
 CLANG_EXIT=$?
 
 if [ $CLANG_EXIT -ne 0 ]; then

@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "logger.hh"
+#include "engine/logger.h"
 
 #include "engine/utils/args.hh"
 #include "engine/debug/validationLayers.hh"

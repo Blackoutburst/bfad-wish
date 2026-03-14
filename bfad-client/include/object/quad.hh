@@ -1,8 +1,7 @@
 #pragma once
 
-#include "types.hh"
+#include "engine/types.hh"
 #include "engine/context.hh"
-
 #include "engine/engine.hh"
 #include "engine/renderer/shaderProgram.hh"
 #include "engine/renderer/vertexArray.hh"
