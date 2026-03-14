@@ -23,7 +23,7 @@ I32 main(I32 argc, I8** argv) {
 
     Cube::It* cube = Cube::create(engine);
     
-    while(Window::isOpen(window)) {
+    while (Window::isOpen(window)) {
         if (!Engine::begin(engine)) continue;
 
         Cube::render(engine, cube);
