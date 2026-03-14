@@ -3,8 +3,8 @@
 #include "types.hh"
 #include "engine/context.hh"
 
+#include "engine/engine.hh"
 #include "engine/math/matrix.hh"
-#include "engine/renderer/renderSystem.hh"
 #include "engine/renderer/shaderProgram.hh"
 #include "engine/renderer/vertexArray.hh"
 #include "engine/utils/uniformBuffer.hh"
@@ -78,7 +78,7 @@ namespace Cube {
         VertexArray::It* vao;
     };
 
-    Cube::It* create(Context::It* ctx, RenderSystem::It* renderSystem);
-    U0 render(Cube::It* cube, VkCommandBuffer cmdBuffer);
-    U0 destroy(Context::It* ctx, Cube::It* cube);
+    Cube::It* create(Engine::It* engine);
+    U0 render(Engine::It* engine, Cube::It* cube);
+    U0 destroy(Engine::It* engine, Cube::It* cube);
 }

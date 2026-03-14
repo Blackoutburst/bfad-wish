@@ -3,7 +3,7 @@
 #include "types.hh"
 #include "engine/context.hh"
 
-#include "engine/renderer/renderSystem.hh"
+#include "engine/engine.hh"
 #include "engine/renderer/shaderProgram.hh"
 #include "engine/renderer/vertexArray.hh"
 #include "engine/utils/uniformBuffer.hh"
@@ -33,7 +33,7 @@ namespace Quad {
         VertexArray::It* vao;
     };
 
-    Quad::It* create(Context::It* ctx, RenderSystem::It* renderSystem);
-    U0 render(Quad::It* quad, VkCommandBuffer cmdBuffer);
-    U0 destroy(Context::It* ctx, Quad::It* quad);
+    Quad::It* create(Engine::It* engine);
+    U0 render(Engine::It* engine, Quad::It* quad);
+    U0 destroy(Engine::It* engine, Quad::It* quad);
 }

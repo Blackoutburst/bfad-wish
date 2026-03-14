@@ -8,9 +8,7 @@ static U0 framebufferResizeCallback(GLFWwindow* window, I32 width, I32 height) {
 }
 
 namespace Window {
-    U0 update(GLFWwindow* window) {
-        UNUSED_VAR(window);
-        
+    U0 update() {
         glfwPollEvents();
     }
 

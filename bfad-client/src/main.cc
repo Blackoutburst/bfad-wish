@@ -9,23 +9,31 @@
 #include "types.hh"
 
 #include "engine/utils/args.hh"
-#include "engine/renderer/vk.hh"
+#include "engine/engine.hh"
 #include "engine/window/window.hh"
+
+#include "object/cube.hh"
 
 I32 main(I32 argc, I8** argv) {
     Args::parse(argc, argv);
     
     GLFWwindow* window = Window::create();
 
-    vkInit(window);
+    Engine::It* engine = Engine::create(window);
+
+    Cube::It* cube = Cube::create(engine);
     
     while(Window::isOpen(window)) {
-        Window::update(window);
+        if (!Engine::begin(engine)) continue;
 
-        vkDrawTriangle();
+        Cube::render(engine, cube);
+
+        Engine::end(engine);
     }
 
-    vkClean();
+    Cube::destroy(engine, cube);
+
+    Engine::destroy(engine);
 
     Window::destroy(window);
 
