@@ -26,3 +26,7 @@ if %CLANG_EXIT% neq 0 (
     echo OK
 )
 
+slangc shader/cube.slang -entry vertMain -stage vertex -target spirv -o shader/cubeVert.spv
+slangc shader/cube.slang -entry fragMain -stage fragment -target spirv -o shader/cubeFrag.spv
+slangc shader/quad.slang -entry vertMain -stage vertex -target spirv -o shader/quadVert.spv
+slangc shader/quad.slang -entry fragMain -stage fragment -target spirv -o shader/quadFrag.spv
