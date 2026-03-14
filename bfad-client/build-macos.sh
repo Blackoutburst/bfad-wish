@@ -1,6 +1,6 @@
 #!/bin/bash
 readonly NAME="vulkan"
-readonly SRC="src/*.cc src/renderer/*.cc src/window/*.cc src/utils/*.cc src/debug/*.cc src/devices/*.cc src/math/*.cc"
+readonly SRC="src/*.cc src/engine/*.cc src/engine/renderer/*.cc src/engine/window/*.cc src/engine/utils/*.cc src/engine/debug/*.cc src/engine/device/*.cc src/engine/math/*.cc src/engine/texture/*.cc src/object/*.cc"
 readonly INCLUDE="-Iinclude"
 
 readonly I_VK="/opt/homebrew/include"

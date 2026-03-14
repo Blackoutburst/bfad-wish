@@ -1,6 +1,6 @@
 @echo off
 set NAME=vulkan
-set SRC=src\*.cc src\renderer\*.cc src\window\*.cc src\utils\*.cc src\debug\*.cc src\devices\*.cc src\math\*.cc
+set SRC=src\*.cc src\engine\*.cc src\engine\renderer\*.cc src\engine\window\*.cc src\engine\utils\*.cc src\engine\debug\*.cc src\engine\device\*.cc src\engine\math\*.cc src\engine\texture\*.cc src\object\*.cc
 set INCLUDE=-Iinclude
 
 set I_VK=C:\VulkanSDK\1.4.341.1\Include

@@ -1,0 +1,13 @@
+#pragma once
+
+#include <vulkan/vulkan.h>
+
+#include "types.hh"
+#include "engine/context.hh"
+
+namespace CommandBuffer {
+    U0 begin(VkCommandBuffer cmdBuffer);
+    U0 end(VkCommandBuffer cmdBuffer);
+    U0 destroy(Context::It* ctx, VkCommandBuffer cmdBuffer);
+    VkCommandBuffer create(Context::It* ctx);
+}
