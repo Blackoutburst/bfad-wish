@@ -1,5 +1,6 @@
 #include <stdlib.h>
 
+#include "engine/math/math.hh"
 #include "engine/engine.hh"
 
 namespace Engine {
@@ -60,7 +61,7 @@ namespace Engine {
         VkExtent2D ext = Swapchain::extend(engine->ctx);
         Matrix::projection(engine->projection, ext.width, ext.height, 90, 0.1, 1000);
         Matrix::ortho2D(engine->projection2d, 0.0f, ext.width, 0.0f, ext.height, -1.0f, 1.0f);
-        Matrix::translate3d(engine->view, 0.0f, 0.0f, -4.0f);
+        Matrix::translate3d(engine->view, 0.0f, 0.0f, 0.0f);
 
         return engine;
     }

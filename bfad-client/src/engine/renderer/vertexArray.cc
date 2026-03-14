@@ -45,7 +45,6 @@ namespace VertexArray {
         vao->layout = layout;
         vao->pipeline = pipeline;
         vao->uniformBuffer = uniformBuffer;
-        vao->texture = texture;
 
         return vao;
     }
@@ -53,9 +52,6 @@ namespace VertexArray {
     U0 bind(VertexArray::It* vao, VkCommandBuffer cmdBuffer) {
         vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, vao->pipeline);
         UniformBuffer::bind(vao->uniformBuffer, cmdBuffer, vao->layout);
-        if (vao->texture != NULL) {
-            Texture::bind(vao->texture, cmdBuffer, vao->layout);
-        }
     }
 
     U0 destroy(Context::It* ctx, VertexArray::It* vao) {

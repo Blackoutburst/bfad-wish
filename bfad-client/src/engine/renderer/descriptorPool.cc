@@ -1,7 +1,7 @@
 #include "engine/renderer/descriptorPool.hh"
 
-#define UNIFORM_BUFFER_COUNT 2
-#define SAMPLER_COUNT 1
+#define UNIFORM_BUFFER_COUNT 64
+#define SAMPLER_COUNT 64
 
 namespace DescriptorPool {
 

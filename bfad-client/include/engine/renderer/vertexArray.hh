@@ -25,7 +25,6 @@ namespace VertexArray {
         VkPipelineLayout layout;
         VkPipeline pipeline;
         UniformBuffer::It* uniformBuffer;
-        Texture::It* texture;
     };
 
     VertexArray::It* create(Context::It* ctx, Description* desc, UniformBuffer::It* uniformBuffer, Texture::It* texture, ShaderProgram::It* shaderProgram, VkRenderPass renderPass);
