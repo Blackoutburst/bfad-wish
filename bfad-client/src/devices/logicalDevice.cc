@@ -92,6 +92,7 @@ namespace LogicalDevice {
         presentQueueCreateInfo.pQueuePriorities = &queuePriority;
 
         VkPhysicalDeviceFeatures deviceFeatures = {};
+        deviceFeatures.samplerAnisotropy = VK_TRUE;
 
         VkDeviceQueueCreateInfo queues[2] = { graphicsQueueCreateInfo, presentQueueCreateInfo };
 

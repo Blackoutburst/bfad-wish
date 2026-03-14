@@ -29,7 +29,7 @@ namespace Quad {
         };
         VertexArray::Description desc = { 20, attrs, 2 };
         
-        quad->vao = VertexArray::create(ctx, &desc, quad->uniformBuffer, quad->shaderProgram, renderSystem->renderPass);
+        quad->vao = VertexArray::create(ctx, &desc, quad->uniformBuffer, NULL, quad->shaderProgram, renderSystem->renderPass);
 
         return quad;
     }

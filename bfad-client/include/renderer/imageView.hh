@@ -22,5 +22,6 @@ namespace ImageView {
     U0 destroy(Context::It* ctx, ImageView::It* imageView);
     ImageView::It* create(Context::It* ctx, VkSwapchainKHR swapchain);
     U0 createDepthImage(Context::It* ctx, ImageView::It* imageView);
+    VkImageView makeView(Context::It* ctx, VkImage image, VkFormat format, VkImageAspectFlags aspectMask);
 }
 

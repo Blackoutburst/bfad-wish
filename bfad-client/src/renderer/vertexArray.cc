@@ -5,7 +5,7 @@
 
 namespace VertexArray {
 
-    VertexArray::It* create(Context::It* ctx, Description* desc, UniformBuffer::It* uniformBuffer, ShaderProgram::It* shaderProgram, VkRenderPass renderPass) {
+    VertexArray::It* create(Context::It* ctx, Description* desc, UniformBuffer::It* uniformBuffer, Texture::It* texture, ShaderProgram::It* shaderProgram, VkRenderPass renderPass) {
         VkVertexInputBindingDescription bindingDesc;
         bindingDesc.binding = 0;
         bindingDesc.stride = desc->stride;
@@ -28,7 +28,15 @@ namespace VertexArray {
         vertexInput.vertexAttributeDescriptionCount = desc->attributeCount;
         vertexInput.pVertexAttributeDescriptions = attrDescs;
 
-        VkPipelineLayout layout = Pipeline::Layout::create(ctx, 1, uniformBuffer->setLayout);
+        VkPipelineLayout layout;
+        if (texture != NULL) {
+            VkDescriptorSetLayout setLayouts[2] = { uniformBuffer->setLayout, texture->setLayout };
+            layout = Pipeline::Layout::create(ctx, 2, setLayouts);
+        } else {
+            VkDescriptorSetLayout setLayouts[1] = { uniformBuffer->setLayout };
+            layout = Pipeline::Layout::create(ctx, 1, setLayouts);
+        }
+
         VkPipeline pipeline = Pipeline::create(ctx, layout, shaderProgram, renderPass, &vertexInput);
 
         free(attrDescs);
@@ -37,6 +45,7 @@ namespace VertexArray {
         vao->layout = layout;
         vao->pipeline = pipeline;
         vao->uniformBuffer = uniformBuffer;
+        vao->texture = texture;
 
         return vao;
     }
@@ -44,6 +53,9 @@ namespace VertexArray {
     U0 bind(VertexArray::It* vao, VkCommandBuffer cmdBuffer) {
         vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, vao->pipeline);
         UniformBuffer::bind(vao->uniformBuffer, cmdBuffer, vao->layout);
+        if (vao->texture != NULL) {
+            Texture::bind(vao->texture, cmdBuffer, vao->layout);
+        }
     }
 
     U0 destroy(Context::It* ctx, VertexArray::It* vao) {

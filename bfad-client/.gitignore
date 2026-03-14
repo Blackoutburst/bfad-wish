@@ -9,3 +9,6 @@ vulkan
 
 ### GFX ###
 *.gfxr
+
+### Skill Issue ###
+.claude/

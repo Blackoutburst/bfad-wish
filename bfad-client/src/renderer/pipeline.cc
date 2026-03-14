@@ -206,18 +206,18 @@ namespace Pipeline {
             vkDestroyPipelineLayout(ctx->device->logical, layout, NULL);
         }
 
-        VkPipelineLayout create(Context::It* ctx, U32 count, VkDescriptorSetLayout setLayout) {
+        VkPipelineLayout create(Context::It* ctx, U32 count, VkDescriptorSetLayout* setLayouts) {
             VkPipelineLayout pipelineLayout;
-            
+
             VkPipelineLayoutCreateInfo createInfo;
             createInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
             createInfo.pNext = NULL;
             createInfo.flags = 0;
             createInfo.setLayoutCount = count;
-            createInfo.pSetLayouts = &setLayout;
+            createInfo.pSetLayouts = setLayouts;
             createInfo.pushConstantRangeCount = 0;
             createInfo.pPushConstantRanges = NULL;
-            
+
             vkCreatePipelineLayout(ctx->device->logical, &createInfo, NULL, &pipelineLayout);
 
             return pipelineLayout;

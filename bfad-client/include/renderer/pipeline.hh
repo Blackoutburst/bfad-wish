@@ -25,6 +25,6 @@ namespace Pipeline {
     namespace Layout {
         U0 remove(Context::It* ctx, VkPipelineLayout layout);
         U0 destroy(Context::It* ctx, VkPipelineLayout pipelineLayout);
-        VkPipelineLayout create(Context::It* ctx, U32 count, VkDescriptorSetLayout setLayout);
+        VkPipelineLayout create(Context::It* ctx, U32 count, VkDescriptorSetLayout* setLayouts);
     }
 }

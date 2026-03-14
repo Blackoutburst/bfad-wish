@@ -78,7 +78,7 @@ U0 vkDrawTriangle(U0) {
     Swapchain::setViewport(ctx, cmdBuffer);
 
     Cube::render(cube, cmdBuffer);
-    Quad::render(quad, cmdBuffer);
+    //Quad::render(quad, cmdBuffer);
 
     RenderPass::end(cmdBuffer);
     CommandBuffer::end(cmdBuffer);

@@ -5,6 +5,7 @@
 #include "types.hh"
 #include "context.hh"
 #include "renderer/shaderProgram.hh"
+#include "renderer/texture.hh"
 #include "utils/uniformBuffer.hh"
 
 namespace VertexArray {
@@ -24,9 +25,10 @@ namespace VertexArray {
         VkPipelineLayout layout;
         VkPipeline pipeline;
         UniformBuffer::It* uniformBuffer;
+        Texture::It* texture;
     };
 
-    VertexArray::It* create(Context::It* ctx, Description* desc, UniformBuffer::It* uniformBuffer, ShaderProgram::It* shaderProgram, VkRenderPass renderPass);
+    VertexArray::It* create(Context::It* ctx, Description* desc, UniformBuffer::It* uniformBuffer, Texture::It* texture, ShaderProgram::It* shaderProgram, VkRenderPass renderPass);
     U0 bind(VertexArray::It* vao, VkCommandBuffer cmdBuffer);
     U0 destroy(Context::It* ctx, VertexArray::It* vao);
 }

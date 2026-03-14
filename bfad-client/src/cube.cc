@@ -4,6 +4,7 @@
 
 #include "utils/buffer.hh"
 #include "renderer/vk.hh"
+#include "renderer/texture.hh"
 #include "math/math.hh"
 
 namespace Cube {
@@ -16,17 +17,19 @@ namespace Cube {
         cube->indexBuffer = Buffer::create(ctx, sizeof(Cube::index[0]) * Cube::indexCount, VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
         cube->shaderProgram = ShaderProgram::create(ctx, "./shader/cubeVert.spv", "./shader/cubeFrag.spv");
         cube->uniformBuffer = UniformBuffer::create(ctx, 0, 192);
-        
+        cube->texture = Texture::create(ctx, "./texture.png");
+
         Buffer::upload(ctx, cube->vertexBuffer, Cube::vertex, sizeof(Cube::vertex[0]) * Cube::vertexCount);
         Buffer::upload(ctx, cube->indexBuffer, Cube::index, sizeof(Cube::index[0]) * Cube::indexCount);
 
-        VertexArray::Attribute attrs[2] = {
+        VertexArray::Attribute attrs[3] = {
             { 0, VK_FORMAT_R32G32B32_SFLOAT, 0  },
             { 1, VK_FORMAT_R32G32B32_SFLOAT, 12 },
+            { 2, VK_FORMAT_R32G32_SFLOAT,    24 },
         };
-        VertexArray::Description desc = { 24, attrs, 2 };
-        
-        cube->vao = VertexArray::create(ctx, &desc, cube->uniformBuffer, cube->shaderProgram, renderSystem->renderPass);
+        VertexArray::Description desc = { 32, attrs, 3 };
+
+        cube->vao = VertexArray::create(ctx, &desc, cube->uniformBuffer, cube->texture, cube->shaderProgram, renderSystem->renderPass);
 
         Matrix::rotate(cube->model, rad(45), 1.0, 0.0, 0.0);
         Matrix::rotate(cube->model, rad(45), 0.0, 1.0, 0.0);
@@ -55,7 +58,8 @@ namespace Cube {
     
     U0 destroy(Context::It* ctx, Cube::It* cube) {
         UniformBuffer::destroy(ctx, cube->uniformBuffer);
-        
+        Texture::destroy(ctx, cube->texture);
+
         Buffer::destroy(ctx, cube->vertexBuffer);
         Buffer::destroy(ctx, cube->indexBuffer);
 

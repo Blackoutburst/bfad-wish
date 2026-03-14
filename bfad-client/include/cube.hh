@@ -7,48 +7,50 @@
 #include "math/matrix.hh"
 #include "renderer/shaderProgram.hh"
 #include "renderer/vertexArray.hh"
+#include "renderer/texture.hh"
 #include "utils/uniformBuffer.hh"
 
 namespace Cube {
-    static U32 vertexCount = 144;
+    static U32 vertexCount = 192;
     static U32 indexCount = 36;
 
-    static F32 vertex[144] = {
+    // layout per vertex: x,y,z, r,g,b, u,v  (8 floats, stride=32)
+    static F32 vertex[192] = {
         // Front
-        -1.0f, -1.0f,  1.0f,  1.0f, 0.0f, 0.0f,
-         1.0f, -1.0f,  1.0f,  1.0f, 0.0f, 0.0f,
-         1.0f,  1.0f,  1.0f,  1.0f, 0.0f, 0.0f,
-        -1.0f,  1.0f,  1.0f,  1.0f, 0.0f, 0.0f,
+        -1.0f, -1.0f,  1.0f,  1.0f, 0.0f, 0.0f,  0.0f, 1.0f,
+         1.0f, -1.0f,  1.0f,  1.0f, 0.0f, 0.0f,  1.0f, 1.0f,
+         1.0f,  1.0f,  1.0f,  1.0f, 0.0f, 0.0f,  1.0f, 0.0f,
+        -1.0f,  1.0f,  1.0f,  1.0f, 0.0f, 0.0f,  0.0f, 0.0f,
 
         // Back
-        -1.0f, -1.0f, -1.0f,  0.0f, 1.0f, 0.0f,
-         1.0f, -1.0f, -1.0f,  0.0f, 1.0f, 0.0f,
-         1.0f,  1.0f, -1.0f,  0.0f, 1.0f, 0.0f,
-        -1.0f,  1.0f, -1.0f,  0.0f, 1.0f, 0.0f,
+        -1.0f, -1.0f, -1.0f,  0.0f, 1.0f, 0.0f,  1.0f, 1.0f,
+         1.0f, -1.0f, -1.0f,  0.0f, 1.0f, 0.0f,  0.0f, 1.0f,
+         1.0f,  1.0f, -1.0f,  0.0f, 1.0f, 0.0f,  0.0f, 0.0f,
+        -1.0f,  1.0f, -1.0f,  0.0f, 1.0f, 0.0f,  1.0f, 0.0f,
 
         // Left
-        -1.0f, -1.0f, -1.0f,  0.0f, 0.0f, 1.0f,
-        -1.0f, -1.0f,  1.0f,  0.0f, 0.0f, 1.0f,
-        -1.0f,  1.0f,  1.0f,  0.0f, 0.0f, 1.0f,
-        -1.0f,  1.0f, -1.0f,  0.0f, 0.0f, 1.0f,
+        -1.0f, -1.0f, -1.0f,  0.0f, 0.0f, 1.0f,  0.0f, 1.0f,
+        -1.0f, -1.0f,  1.0f,  0.0f, 0.0f, 1.0f,  1.0f, 1.0f,
+        -1.0f,  1.0f,  1.0f,  0.0f, 0.0f, 1.0f,  1.0f, 0.0f,
+        -1.0f,  1.0f, -1.0f,  0.0f, 0.0f, 1.0f,  0.0f, 0.0f,
 
         // Right
-         1.0f, -1.0f, -1.0f,  1.0f, 1.0f, 0.0f,
-         1.0f, -1.0f,  1.0f,  1.0f, 1.0f, 0.0f,
-         1.0f,  1.0f,  1.0f,  1.0f, 1.0f, 0.0f,
-         1.0f,  1.0f, -1.0f,  1.0f, 1.0f, 0.0f,
+         1.0f, -1.0f, -1.0f,  1.0f, 1.0f, 0.0f,  1.0f, 1.0f,
+         1.0f, -1.0f,  1.0f,  1.0f, 1.0f, 0.0f,  0.0f, 1.0f,
+         1.0f,  1.0f,  1.0f,  1.0f, 1.0f, 0.0f,  0.0f, 0.0f,
+         1.0f,  1.0f, -1.0f,  1.0f, 1.0f, 0.0f,  1.0f, 0.0f,
 
         // Top
-        -1.0f,  1.0f,  1.0f,  0.0f, 1.0f, 1.0f,
-         1.0f,  1.0f,  1.0f,  0.0f, 1.0f, 1.0f,
-         1.0f,  1.0f, -1.0f,  0.0f, 1.0f, 1.0f,
-        -1.0f,  1.0f, -1.0f,  0.0f, 1.0f, 1.0f,
+        -1.0f,  1.0f,  1.0f,  0.0f, 1.0f, 1.0f,  0.0f, 1.0f,
+         1.0f,  1.0f,  1.0f,  0.0f, 1.0f, 1.0f,  1.0f, 1.0f,
+         1.0f,  1.0f, -1.0f,  0.0f, 1.0f, 1.0f,  1.0f, 0.0f,
+        -1.0f,  1.0f, -1.0f,  0.0f, 1.0f, 1.0f,  0.0f, 0.0f,
 
         // Bottom
-        -1.0f, -1.0f,  1.0f,  1.0f, 0.0f, 1.0f,
-         1.0f, -1.0f,  1.0f,  1.0f, 0.0f, 1.0f,
-         1.0f, -1.0f, -1.0f,  1.0f, 0.0f, 1.0f,
-        -1.0f, -1.0f, -1.0f,  1.0f, 0.0f, 1.0f,
+        -1.0f, -1.0f,  1.0f,  1.0f, 0.0f, 1.0f,  0.0f, 0.0f,
+         1.0f, -1.0f,  1.0f,  1.0f, 0.0f, 1.0f,  1.0f, 0.0f,
+         1.0f, -1.0f, -1.0f,  1.0f, 0.0f, 1.0f,  1.0f, 1.0f,
+        -1.0f, -1.0f, -1.0f,  1.0f, 0.0f, 1.0f,  0.0f, 1.0f,
     };
 
     static U32 index[36] = {
@@ -72,6 +74,7 @@ namespace Cube {
         Buffer::It* vertexBuffer;
         Buffer::It* indexBuffer;
         UniformBuffer::It* uniformBuffer;
+        Texture::It* texture;
         VertexArray::It* vao;
     };
 
